@@ -25,10 +25,23 @@ namespace Homework2Cpts321Tests
             List<int> testList= new List<int>();
             testListObject.GenerateRandomNumberList(ref testList);
             Assert.That(testList.Count(), Is.EqualTo(10000));              
-            
         }
-       
 
-      
+        /// <summary>
+        /// Tests that HashSetImplementation() finds 
+        /// the correct number of unique items
+        /// </summary>
+        [Test]
+        public void TestHashSetImplementation()
+        {
+            ListOfRandomNumbers testListObject = new ListOfRandomNumbers();
+            List<int> testList = new List<int>();
+            testListObject.GenerateRandomNumberList(ref testList);
+            int testUniqueValues = testList.Distinct().Count();
+            Assert.That(testListObject.HashSetImplementation(testList), Is.EqualTo(testUniqueValues));
+        }
+
+
+
     }
 }

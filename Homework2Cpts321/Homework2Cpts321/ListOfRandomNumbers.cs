@@ -29,5 +29,16 @@ namespace Homework2Cpts321
             }
         }
 
+        /// <summary>
+        /// HashSetImplementation, used to find the amount of unique numbers
+        /// in the list with a hash set
+        /// </summary>
+        /// <param name="randomList"></param>
+        /// <returns></returns>
+        public int HashSetImplementation(List<int> randomList)
+        {
+            return 0;
+        }
+
     }
 }
