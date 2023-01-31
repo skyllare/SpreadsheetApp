@@ -37,7 +37,12 @@ namespace Homework2Cpts321
         /// <returns></returns>
         public int HashSetImplementation(List<int> randomList)
         {
-            return 0;
+            HashSet<int> uniqueRandomNumbers = new HashSet<int>();
+            for (int i = 0; i < randomList.Count(); i++) 
+            {
+                uniqueRandomNumbers.Add(randomList[i]);
+            }
+            return uniqueRandomNumbers.Count();
         }
 
     }
