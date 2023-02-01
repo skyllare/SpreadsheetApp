@@ -47,7 +47,22 @@ namespace Homework2Cpts321
 
         public int ConstantStorageImplementation(List<int> randomList) 
         {
-            return 0;
+            int countUnique = 0;
+
+            for (int i = 0; i <= 20000; i++)
+            {
+                
+                for (int j = 0; j < randomList.Count(); j++)
+                {
+                    if (randomList[j] == i)
+                    {
+                        countUnique++;
+                        break;
+                    }
+                }
+            }
+            
+            return countUnique;
         }
 
     }
