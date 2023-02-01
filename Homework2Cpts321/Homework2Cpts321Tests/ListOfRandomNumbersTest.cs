@@ -66,7 +66,33 @@ namespace Homework2Cpts321Tests
             int testUniqueValues = testList.Distinct().Count();
             Assert.That(testListObject.HashSetImplementation(testList), Is.EqualTo(testUniqueValues));
         }
+        /// <summary>
+        /// Tests if the HashSetImplementation() finds any values
+        /// </summary>
+        [Test]
+        public void TestHashSetImplementationMinReturn()
+        {
+            ListOfRandomNumbers testListObject = new ListOfRandomNumbers();
+            List<int> testList = new List<int>();
+            testListObject.GenerateRandomNumberList(ref testList);
+            testListObject.HashSetImplementation(testList);
+            Assert.That(testListObject.HashSetImplementation(testList), Is.GreaterThan(0));
+        }
 
+
+        /// <summary>
+        /// Tests if the HashSetImplementation() finds more values than
+        /// on the original list
+        /// </summary>
+        [Test]
+        public void TestHashSetImplementationMaxReturn()
+        {
+            ListOfRandomNumbers testListObject = new ListOfRandomNumbers();
+            List<int> testList = new List<int>();
+            testListObject.GenerateRandomNumberList(ref testList);
+            testListObject.HashSetImplementation(testList);
+            Assert.That(testListObject.HashSetImplementation(testList), Is.LessThanOrEqualTo(10000));
+        }
         /// <summary>
         /// Tests that the number of distinct numbers found by the 
         /// ConstantStorageImplementation() method matches the list.distinct.count
