@@ -136,6 +136,50 @@ namespace Homework2Cpts321Tests
             Assert.That(testListObject.ConstantStorageImplementation(testList), Is.LessThanOrEqualTo(10000));
         }
 
+        /// <summary>
+        /// Tests that the number of distinct numbers found by the 
+        /// ConstantStorageImplementation() method matches the list.distinct.count
+        /// number
+        /// </summary>
+        [Test]
+        public void TestSortingListImplementation()
+        {
+            ListOfRandomNumbers testListObject = new ListOfRandomNumbers();
+            List<int> testList = new List<int>();
+            testListObject.GenerateRandomNumberList(ref testList);
+            int testUniqueValues = testList.Distinct().Count();
+            Assert.That(testListObject.SortListAndCount(testList), Is.EqualTo(testUniqueValues));
+        }
+
+        /// <summary>
+        /// Tests if the ConstantStorageImplementation() finds any values
+        /// </summary>
+        [Test]
+        public void TestSortingListImplementationMinReturn()
+        {
+            ListOfRandomNumbers testListObject = new ListOfRandomNumbers();
+            List<int> testList = new List<int>();
+            testListObject.GenerateRandomNumberList(ref testList);
+            testListObject.SortListAndCount(testList);
+            Assert.That(testListObject.SortListAndCount(testList), Is.GreaterThan(0));
+        }
+
+
+        /// <summary>
+        /// Tests if the ConstantStorageImplementation() doesn't go over
+        /// the size of the original list (10000)
+        /// </summary>
+        [Test]
+        public void TestSortingListImplementationMaxReturn()
+        {
+            ListOfRandomNumbers testListObject = new ListOfRandomNumbers();
+            List<int> testList = new List<int>();
+            testListObject.GenerateRandomNumberList(ref testList);
+            testListObject.SortListAndCount(testList);
+            Assert.That(testListObject.SortListAndCount(testList), Is.LessThanOrEqualTo(10000));
+        }
+
+
 
     }
 }

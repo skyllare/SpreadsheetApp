@@ -65,5 +65,10 @@ namespace Homework2Cpts321
             return countUnique;
         }
 
+        public int SortListAndCount(List<int> randomList)
+        {
+            return 0;
+        }
+
     }
 }
