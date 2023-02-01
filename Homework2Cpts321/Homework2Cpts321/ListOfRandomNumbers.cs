@@ -45,5 +45,10 @@ namespace Homework2Cpts321
             return uniqueRandomNumbers.Count();
         }
 
+        public int ConstantStorageImplementation(List<int> randomList) 
+        {
+            return 0;
+        }
+
     }
 }

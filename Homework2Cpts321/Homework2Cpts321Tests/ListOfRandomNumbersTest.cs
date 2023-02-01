@@ -41,6 +41,15 @@ namespace Homework2Cpts321Tests
             Assert.That(testListObject.HashSetImplementation(testList), Is.EqualTo(testUniqueValues));
         }
 
+        [Test]
+        public void TestConstantStorageImplementation()
+        {
+            ListOfRandomNumbers testListObject = new ListOfRandomNumbers();
+            List<int> testList = new List<int>();
+            testListObject.GenerateRandomNumberList(ref testList);
+            int testUniqueValues = testList.Distinct().Count();
+            Assert.That(testListObject.ConstantStorageImplementation(testList), Is.EqualTo(testUniqueValues));
+        }
 
 
     }
