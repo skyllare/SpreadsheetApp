@@ -68,15 +68,16 @@ namespace Homework2Cpts321
         public int SortListAndCount(List<int> randomList)
         {
             int countUnique = 0;
-            int numberTrack = 0;
+            int numberTrack = -1;
             randomList.Sort();
-            for (int i =0; i<randomList.Count(); i++)
+            for (int i =0; i < randomList.Count(); i++)
             {
-                if (randomList[i]!= numberTrack)
+                if (randomList[i] != numberTrack)
                 {
                     countUnique++;
-                    numberTrack = randomList[i];
+                    
                 }
+                numberTrack = randomList[i];
             }
 
             return countUnique;

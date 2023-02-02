@@ -36,7 +36,7 @@ namespace Homework2Cpts321
             int hashSetCount = randomListObject.HashSetImplementation(randomList);
             int constStorageCount = randomListObject.ConstantStorageImplementation(randomList);
             int sortListAndCountCount = randomListObject.SortListAndCount(randomList);
-            outputString1 = "1. HashSet Method: " + hashSetCount + " unique numbers. " + "\n time complexityinfo";
+            outputString1 = "1. HashSet Method: " + hashSetCount + " unique numbers. " + "\n The time complexity for the HashSet Method is O(n). This is due to the for loop inside the method.";
             outputString2 = "2. O(1) storage method " + constStorageCount + " unique numbers. ";
             outputString3 = "3. Sorted method: " + sortListAndCountCount + " unique numbers.";
             
