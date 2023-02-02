@@ -44,11 +44,15 @@ namespace Homework2Cpts321
             }
             return uniqueRandomNumbers.Count();
         }
-
+        /// <summary>
+        /// ConstantStorageImplementation, which is the second method for counting distinct numbers
+        /// </summary>
+        /// <param name="randomList"></param>
+        /// <returns></returns>
         public int ConstantStorageImplementation(List<int> randomList) 
         {
             int countUnique = 0;
-
+            ///storage is O(1) due to the count being stored inside an integer.
             for (int i = 0; i <= 20000; i++)
             {
                 
@@ -65,11 +69,21 @@ namespace Homework2Cpts321
             return countUnique;
         }
 
+        /// <summary>
+        /// SortListAndCount method that sorts the list first to count the unqiue numbers
+        /// </summary>
+        /// <param name="randomList"></param>
+        /// <returns></returns>
         public int SortListAndCount(List<int> randomList)
         {
             int countUnique = 0;
             int numberTrack = -1;
+            //sorts list
             randomList.Sort();
+            ///goes through each number in the list. Since the list in is order, everytime you reach a new 
+            ///number the numberTrack will be updated to that new number.
+            ///
+            ///one for loop, O(n)
             for (int i =0; i < randomList.Count(); i++)
             {
                 if (randomList[i] != numberTrack)
