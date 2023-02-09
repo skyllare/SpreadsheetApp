@@ -1,5 +1,5 @@
 ﻿// <copyright file="Program.cs" company="Skyllar Estill 11750544">
-// Copyright (c) Skyllar Estill. All rights reserved.
+// Copyright (c) Skyllar Estill 11750544. All rights reserved.
 // </copyright>
 
 using System;
@@ -19,7 +19,7 @@ namespace Homework3Cpts321
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

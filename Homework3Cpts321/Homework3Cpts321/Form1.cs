@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="Form1.cs" company="Skyllar Estill 11750544">
+// Copyright (c) Skyllar Estill 11750544. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,14 +21,12 @@ namespace Homework3Cpts321
     /// </summary>
     public partial class Form1 : Form
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Form1"/> class.
         /// </summary>
         public Form1()
         {
             this.InitializeComponent();
-
         }
 
         /// <summary>
@@ -34,7 +36,6 @@ namespace Homework3Cpts321
         /// <param name="e">Contains event data.</param>
         private void Form1_Load(object sender, EventArgs e)
         {
-           
         }
 
         /// <summary>
@@ -43,10 +44,10 @@ namespace Homework3Cpts321
         /// </summary>
         /// <param name="sender"> contains a reference to the control/object that raised the event.</param>
         /// <param name="e">Contains event data.</param>
-        private void loadFibonacciNumbersToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LoadFibonacciNumbersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FibonacciTextReader FiftyNumber = new FibonacciTextReader(50);
-            this.LoadText(FiftyNumber);
+            FibonacciTextReader fiftyNumber = new FibonacciTextReader(50);
+            this.LoadText(fiftyNumber);
         }
 
         /// <summary>
@@ -54,7 +55,7 @@ namespace Homework3Cpts321
         /// </summary>
         /// <param name="sender"> contains a reference to the control/object that raised the event.</param>
         /// <param name="e">Contains event data.</param>
-        private void loadFromFileToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LoadFromFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
@@ -63,6 +64,7 @@ namespace Homework3Cpts321
                 {
                     MessageBox.Show(dialog.FileName);
                 }
+
                 System.IO.TextReader readFile = new StreamReader(dialog.FileName);
                 this.LoadText(readFile);
             }
@@ -74,10 +76,10 @@ namespace Homework3Cpts321
         /// </summary>
         /// <param name="sender"> contains a reference to the control/object that raised the event.</param>
         /// <param name="e">Contains event data.</param>
-        private void loadFibonacciNumbersfirst100ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LoadFibonacciNumbersfirst100ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FibonacciTextReader HundredNumber = new FibonacciTextReader(100);
-            this.LoadText(HundredNumber);
+            FibonacciTextReader hundredNumber = new FibonacciTextReader(100);
+            this.LoadText(hundredNumber);
         }
 
         /// <summary>
@@ -85,7 +87,7 @@ namespace Homework3Cpts321
         /// </summary>
         /// <param name="sender"> contains a reference to the control/object that raised the event.</param>
         /// <param name="e">Contains event data.</param>
-        private void saveToFileToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveToFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog dialog = new OpenFileDialog())
             {

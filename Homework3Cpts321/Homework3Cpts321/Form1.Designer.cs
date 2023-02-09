@@ -65,21 +65,21 @@
             this.loadFromFileToolStripMenuItem.Name = "loadFromFileToolStripMenuItem";
             this.loadFromFileToolStripMenuItem.Size = new System.Drawing.Size(387, 34);
             this.loadFromFileToolStripMenuItem.Text = "Load from file...";
-            this.loadFromFileToolStripMenuItem.Click += new System.EventHandler(this.loadFromFileToolStripMenuItem_Click);
+            this.loadFromFileToolStripMenuItem.Click += new System.EventHandler(this.LoadFromFileToolStripMenuItem_Click);
             // 
             // loadFibonacciNumbersToolStripMenuItem
             // 
             this.loadFibonacciNumbersToolStripMenuItem.Name = "loadFibonacciNumbersToolStripMenuItem";
             this.loadFibonacciNumbersToolStripMenuItem.Size = new System.Drawing.Size(387, 34);
             this.loadFibonacciNumbersToolStripMenuItem.Text = "Load Fibonacci numbers (first 50)";
-            this.loadFibonacciNumbersToolStripMenuItem.Click += new System.EventHandler(this.loadFibonacciNumbersToolStripMenuItem_Click);
+            this.loadFibonacciNumbersToolStripMenuItem.Click += new System.EventHandler(this.LoadFibonacciNumbersToolStripMenuItem_Click);
             // 
             // loadFibonacciNumbersfirst100ToolStripMenuItem
             // 
             this.loadFibonacciNumbersfirst100ToolStripMenuItem.Name = "loadFibonacciNumbersfirst100ToolStripMenuItem";
             this.loadFibonacciNumbersfirst100ToolStripMenuItem.Size = new System.Drawing.Size(387, 34);
             this.loadFibonacciNumbersfirst100ToolStripMenuItem.Text = "Load Fibonacci numbers (first 100)";
-            this.loadFibonacciNumbersfirst100ToolStripMenuItem.Click += new System.EventHandler(this.loadFibonacciNumbersfirst100ToolStripMenuItem_Click);
+            this.loadFibonacciNumbersfirst100ToolStripMenuItem.Click += new System.EventHandler(this.LoadFibonacciNumbersfirst100ToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -91,7 +91,7 @@
             this.saveToFileToolStripMenuItem.Name = "saveToFileToolStripMenuItem";
             this.saveToFileToolStripMenuItem.Size = new System.Drawing.Size(387, 34);
             this.saveToFileToolStripMenuItem.Text = "Save to file...";
-            this.saveToFileToolStripMenuItem.Click += new System.EventHandler(this.saveToFileToolStripMenuItem_Click);
+            this.saveToFileToolStripMenuItem.Click += new System.EventHandler(this.SaveToFileToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 

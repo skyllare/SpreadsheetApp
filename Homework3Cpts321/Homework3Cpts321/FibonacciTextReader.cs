@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="FibonacciTextReader.cs" company="Skyllar Estill 11750544">
+// Copyright (c) Skyllar Estill 11750544. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +13,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
-
 namespace Homework3Cpts321
 {
     /// <summary>
@@ -18,7 +21,7 @@ namespace Homework3Cpts321
     public class FibonacciTextReader : System.IO.TextReader
     {
         /// <summary>
-        /// keeps track of max numbers;
+        /// keeps track of max numbers.
         /// </summary>
         private readonly int max;
 
@@ -65,7 +68,8 @@ namespace Homework3Cpts321
             {
                 return null;
             }
-            // for the first two cases (0,1). 
+
+            // for the first two cases (0,1).
             if (this.count < 2)
             {
                 this.count++;

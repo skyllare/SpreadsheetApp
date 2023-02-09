@@ -1,9 +1,14 @@
-﻿namespace HW3Testing
+﻿// <copyright file="Tests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace HW3Testing
 {
     using Homework3Cpts321;
+    using NUnit.Framework;
 
     /// <summary>
-    /// Testing class for all method testing
+    /// Testing class for all method testing.
     /// </summary>
     public class Tests
     {
