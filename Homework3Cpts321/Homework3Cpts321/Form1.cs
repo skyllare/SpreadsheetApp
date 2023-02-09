@@ -36,7 +36,7 @@ namespace Homework3Cpts321
         /// <param name="e">Contains event data.</param>
         private void Form1_Load(object sender, EventArgs e)
         {
-           
+            
         }
 
         /// <summary>
@@ -57,8 +57,14 @@ namespace Homework3Cpts321
         /// <param name="e">Contains event data.</param>
         private void loadFromFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.IO.TextReader reader = new StreamReader("C:\\Users\\skyll\\OneDrive\\Desktop\\cpts321-hws\\Homework3Cpts321\\Homework3Cpts321\\LoadTextFile.txt");
-            LoadText(reader);
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "*.txt|";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                MessageBox.Show(dialog.FileName);
+            }
+            System.IO.TextReader readFile = new StreamReader(dialog.FileName);
+            LoadText(readFile);
         }
 
         /// <summary>
@@ -81,6 +87,7 @@ namespace Homework3Cpts321
         {
 
         }
+
         /// <summary>
         /// Reads text from the TextReader object and puts it into the text box
         /// in Form1.
