@@ -8,24 +8,13 @@ namespace HW3Testing
     public class Tests
     {
         /// <summary>
-        /// Test to see if CalculateNumbers returns the correct calculation.
+        /// test if our read line override is returning null values
         /// </summary>
         [Test]
-        public void TestCalculateNumbers()
+        public void TestReadLineOverride()
         {
             FibonacciTextReader reader = new FibonacciTextReader(10);
-            Assert.That(reader.CalculateNumbers(2,5), Is.EqualTo(10));
-        }
-
-        /// <summary>
-        /// Test to see if CalculateNumbers returns positive numbers by using the first
-        /// two numbers of the sequence to test.
-        /// </summary>
-        [Test]
-        public void TestCalculateNumbersLow()
-        {
-            FibonacciTextReader reader = new FibonacciTextReader(10);
-            Assert.That(reader.CalculateNumbers(0, 1), Is.GreaterThanOrEqualTo(0));
+            Assert.That(reader.ReadLine(), Is.Not.SameAs(null));
         }
     }
 }
