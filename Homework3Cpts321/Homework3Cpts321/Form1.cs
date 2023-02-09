@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace Homework3Cpts321
 {
@@ -33,7 +34,7 @@ namespace Homework3Cpts321
         /// <param name="e">Contains event data.</param>
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+           
         }
 
         /// <summary>
@@ -44,7 +45,8 @@ namespace Homework3Cpts321
         /// <param name="e">Contains event data.</param>
         private void loadFibonacciNumbersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            FibonacciTextReader FiftyNumber = new FibonacciTextReader(50);
+            this.LoadText(FiftyNumber);
         }
 
         /// <summary>
@@ -72,7 +74,8 @@ namespace Homework3Cpts321
         /// <param name="e">Contains event data.</param>
         private void loadFibonacciNumbersfirst100ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            FibonacciTextReader HundredNumber = new FibonacciTextReader(100);
+            this.LoadText(HundredNumber);
         }
 
         /// <summary>
