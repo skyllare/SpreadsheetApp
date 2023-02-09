@@ -10,6 +10,9 @@ using System.Windows.Forms;
 
 namespace Homework3Cpts321
 {
+    /// <summary>
+    /// Documentation for the methods used in the notepad.
+    /// </summary>
     internal static class Program
     {
         /// <summary>
