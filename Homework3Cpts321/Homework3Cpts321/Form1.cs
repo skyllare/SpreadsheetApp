@@ -8,10 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-/*
- *  System.IO.TextReader reader = new StreamReader("C:\\Users\\skyll\\OneDrive\\Desktop\\cpts321-hws\\Homework3Cpts321\\Homework3Cpts321\\LoadTextFile.txt");
-            LoadText(reader);
-*/
+
 namespace Homework3Cpts321
 {
     /// <summary>
@@ -85,7 +82,13 @@ namespace Homework3Cpts321
         /// <param name="e">Contains event data.</param>
         private void saveToFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "*.txt|";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                MessageBox.Show("Saving to " + dialog.FileName);
+            }
+            File.WriteAllText(dialog.FileName, textBox1.Text);
         }
 
         /// <summary>
