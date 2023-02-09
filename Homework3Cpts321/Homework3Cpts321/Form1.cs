@@ -61,7 +61,7 @@ namespace Homework3Cpts321
                 MessageBox.Show(dialog.FileName);
             }
             System.IO.TextReader readFile = new StreamReader(dialog.FileName);
-            LoadText(readFile);
+            this.LoadText(readFile);
         }
 
         /// <summary>
@@ -88,7 +88,8 @@ namespace Homework3Cpts321
             {
                 MessageBox.Show("Saving to " + dialog.FileName);
             }
-            File.WriteAllText(dialog.FileName, textBox1.Text);
+
+            File.WriteAllText(dialog.FileName, this.textBox1.Text);
         }
 
         /// <summary>
