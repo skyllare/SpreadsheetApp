@@ -56,14 +56,16 @@ namespace Homework3Cpts321
         /// <param name="e">Contains event data.</param>
         private void loadFromFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "*.txt|";
-            if (dialog.ShowDialog() == DialogResult.OK)
+            using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                MessageBox.Show(dialog.FileName);
+                dialog.Filter = "*.txt|";
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show(dialog.FileName);
+                }
+                System.IO.TextReader readFile = new StreamReader(dialog.FileName);
+                this.LoadText(readFile);
             }
-            System.IO.TextReader readFile = new StreamReader(dialog.FileName);
-            this.LoadText(readFile);
         }
 
         /// <summary>
@@ -85,14 +87,16 @@ namespace Homework3Cpts321
         /// <param name="e">Contains event data.</param>
         private void saveToFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "*.txt|";
-            if (dialog.ShowDialog() == DialogResult.OK)
+            using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                MessageBox.Show("Saving to " + dialog.FileName);
-            }
+                dialog.Filter = "*.txt|";
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show("Saving to " + dialog.FileName);
+                }
 
-            File.WriteAllText(dialog.FileName, this.textBox1.Text);
+                File.WriteAllText(dialog.FileName, this.textBox1.Text);
+            }
         }
 
         /// <summary>

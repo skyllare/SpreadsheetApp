@@ -56,17 +56,23 @@ namespace Homework3Cpts321
         /// <returns> ReadLine.</returns>
         public override string ReadLine()
         {
-            if (this.count == this.max)
+            if (this.max < 0)
             {
                 return null;
             }
 
+            if (this.count == this.max)
+            {
+                return null;
+            }
+            // for the first two cases (0,1). 
             if (this.count < 2)
             {
                 this.count++;
                 return (this.count - 1).ToString();
             }
 
+            // if we are beyond the first two cases, this caluclates the other numbers for the sequence
             BigInteger temp = this.current;
             this.current += this.previous;
             this.previous = temp;
@@ -81,11 +87,11 @@ namespace Homework3Cpts321
         public override string ReadToEnd()
         {
             StringBuilder concat = new StringBuilder();
-            string temp = this.ReadLine(); ;
+            string temp = this.ReadLine();
             int count = 1;
             while (temp != null)
             {
-                concat.Append(count + ". " + temp + Environment.NewLine);
+                concat.Append(count + ". " + temp + Environment.NewLine);   // adds the count of what number we are on to the new number in the sequence
                 temp = this.ReadLine();
                 count++;
             }
