@@ -13,7 +13,7 @@
         [Test]
         public void TestReadLineOverride()
         {
-            FibonacciTextReader reader = new FibonacciTextReader(10);
+            FibonacciTextReader reader = new (10);
             Assert.That(reader.ReadLine(), Is.Not.SameAs(null));
         }
 
@@ -23,7 +23,7 @@
         [Test]
         public void TestMaxNegative()
         {
-            FibonacciTextReader reader = new FibonacciTextReader(-1);
+            FibonacciTextReader reader = new (-1);
             Assert.That(reader.ReadLine(), Is.EqualTo(null));
         }
 
@@ -33,7 +33,7 @@
         [Test]
         public void TestReadToEndReturn()
         {
-            FibonacciTextReader reader = new FibonacciTextReader(10);
+            FibonacciTextReader reader = new (10);
             string? line = reader.ReadToEnd();
             Assert.That(line, Is.Not.SameAs(null));
         }
@@ -44,7 +44,7 @@
         [Test]
         public void TestReadToEndFirstAmount()
         {
-            FibonacciTextReader reader = new FibonacciTextReader(2);
+            FibonacciTextReader reader = new (2);
             string? line = reader.ReadToEnd();
             Assert.That(line, Is.EqualTo("1. 0\r\n2. 1\r\n"));
         }
