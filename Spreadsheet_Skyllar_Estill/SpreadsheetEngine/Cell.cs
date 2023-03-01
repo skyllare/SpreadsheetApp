@@ -10,8 +10,13 @@ namespace SpreadsheetEngine
     /// <summary>
     /// abstract class for singular cell of spreadsheet.
     /// </summary>
-    public class Cell : INotifyPropertyChanged
+    public abstract class Cell : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Used to allow spreadsheet class to set the value of the cell.
+        /// </summary>
+        protected string value;
+
         /// <summary>
         /// private read-only value for the row index.
         /// </summary>
@@ -33,16 +38,11 @@ namespace SpreadsheetEngine
         private string cellValue;
 
         /// <summary>
-        /// 
-        /// </summary>
-        protected string value;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Cell"/> class.
         /// </summary>
         /// <param name="inputRowIndex">what row.</param>
         /// <param name="inputColumnIndex">what column.</param>
-        private Cell(int inputRowIndex, int inputColumnIndex)
+        protected Cell(int inputRowIndex, int inputColumnIndex)
         {
             this.rowIndex = inputRowIndex;
             this.columnIndex = inputColumnIndex;
@@ -88,7 +88,7 @@ namespace SpreadsheetEngine
 
                 this.cellText = value;
                 this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CellText)));
-                this.EvaluateFormula();
+                //this.EvaluateFormula();
             }
         }
 
@@ -111,14 +111,12 @@ namespace SpreadsheetEngine
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
         }
 
-        protected virtual void EvaluateFormula()
+        /*protected virtual void EvaluateFormula()
         {
             if (this.cellText != null && this.cellText.StartsWith("="))
             {
-                
-               this.SetValue("10");
+               // this.SetValue(/* evaluated result of formula );
             }
-        }
-
+        }*/
     }
 }
