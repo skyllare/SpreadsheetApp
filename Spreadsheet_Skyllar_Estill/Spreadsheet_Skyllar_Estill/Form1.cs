@@ -15,6 +15,9 @@ using SpreadsheetEngine;
 
 namespace Spreadsheet_Skyllar_Estill
 {
+    /// <summary>
+    /// class for the form.
+    /// </summary>
     public partial class Form1 : Form
     {
         /// <summary>
@@ -26,6 +29,12 @@ namespace Spreadsheet_Skyllar_Estill
             this.InitializeComponent();
             this.InitializeDataGrid();
         }
+
+        /// <summary>
+        /// Info ran as the form loads.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
 
         private void Form1_Load(object sender, EventArgs e)
         {
