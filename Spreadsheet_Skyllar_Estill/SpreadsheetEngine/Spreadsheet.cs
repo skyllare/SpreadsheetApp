@@ -17,12 +17,19 @@ namespace SpreadsheetEngine
     /// </summary>
     public class Spreadsheet
     {
-        public event PropertyChangedEventHandler CellPropertyChanged;
+        
 
         private MyCell[,] cells;
+       
+
+        private int rowCount;
+        private int columnCount;
 
         public Spreadsheet(int numRows, int numCols)
         {
+            this.RowCount = numRows;
+            this.ColumnCount = numCols;
+
             this.cells = new MyCell[numRows, numCols];
 
             for (int row = 0; row < numRows; row++)
@@ -30,32 +37,63 @@ namespace SpreadsheetEngine
                 for (int col = 0; col < numCols; col++)
                 {
                     this.cells[row, col] = new MyCell(row, col);
+                    this.cells[row, col].PropertyChanged += MyCellPropertyChanged;
                 }
             }
         }
-        public MyCell[,] Cells
-        {
-            get { return this.cells; }
-        }
+
+        public event PropertyChangedEventHandler? CellPropertyChanged = delegate { };
 
         public int ColumnCount
         {
-            get { return this.cells.GetLength(1); }
+            get { return this.columnCount; }
+            set { this.columnCount = value; }
         }
 
         public int RowCount
         {
-            get { return this.cells.GetLength(0); }
+            get { return this.rowCount; }
+            set { this.rowCount = value; }
         }
 
-        public Cell GetCell(int numRow, int numCol)
+        public Cell? GetCell(int numRow, int numCol)
         {
-            if (numRow < 0 || numRow >= this.cells.GetLength(0) || numCol < 0 || numCol >= this.cells.GetLength(1))
+            if (numRow < 0 || numRow >= this.RowCount || numCol < 0 || numCol >= this.ColumnCount)
             {
                 return null;
             }
 
             return this.cells[numRow, numCol];
+        }
+
+        private void MyCellPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            MyCell? curCell = sender as MyCell;
+            if (curCell != null)
+            {
+                if (e.PropertyName == "CellText")
+                {
+                    if (curCell.CellText[0] == '=')
+                    {
+                        char columnLetter = curCell.CellText[1];
+
+                        int column = (int)columnLetter - 65;
+                        string sRow = curCell.CellText.Substring(2);
+                        int row = int.Parse(sRow);
+
+                        curCell.CellValue = this.cells[row, column].CellValue;
+                    }
+                    else
+                    {
+                        curCell.CellValue = curCell.CellText;
+                    }
+                }
+            }
+
+            if (this.CellPropertyChanged != null)
+            {
+                this.CellPropertyChanged(sender, e);
+            }
         }
 
         public class MyCell : Cell
@@ -65,44 +103,12 @@ namespace SpreadsheetEngine
             {
             }
 
-            public static MyCell createCell(int rowIndex, int columnIndex)
+            public new string CellValue
             {
-                return new MyCell(rowIndex, columnIndex);
+                get { return this.cellValue; }
+                set { this.cellValue = value; }
             }
 
-            public void setValue(MyCell[,] cellGrid)
-            {
-                string thisText = this.CellText;
-
-                if (thisText[0] == '=')
-                {
-                    byte[] asciiBytes = ASCIIEncoding.ASCII.GetBytes(thisText);
-
-                    this.value = cellGrid[asciiBytes[1] - 65, asciiBytes[2]].CellValue;
-                }
-                else
-                {
-                    this.value = thisText;
-                }
-            }
-        }
-        protected void OnCellPropertyChanged(Cell c, string text)
-        {
-            PropertyChangedEventHandler handler = this.CellPropertyChanged;
-
-            if (handler != null)
-            {
-                handler(c, new PropertyChangedEventArgs(text));
-            }
-        }
-
-        private void handler(object sender, PropertyChangedEventArgs e)
-        {
-            MyCell c = sender as MyCell;
-
-            c.setValue(this.cells);
-
-            OnCellPropertyChanged(sender as Cell, "CellValue");
         }
     }
 }

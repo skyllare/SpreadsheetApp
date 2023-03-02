@@ -12,39 +12,33 @@ namespace SpreadsheetEngine
     /// </summary>
     public abstract class Cell : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-        /// <summary>
-        /// Used to allow spreadsheet class to set the value of the cell.
-        /// </summary>
-        protected string value;
-
+        public event PropertyChangedEventHandler? PropertyChanged = delegate { };
         /// <summary>
         /// private read-only value for the row index.
         /// </summary>
-        private readonly int rowIndex;
+        protected readonly int rowIndex;
 
         /// <summary>
         /// private read-only value for the column index.
         /// </summary>
-        private readonly int columnIndex;
+        protected readonly int columnIndex;
 
         /// <summary>
         /// Represents the actual text that’s typed into the cell.
         /// </summary>
-        private string cellText;
+        protected string cellText;
 
         /// <summary>
         /// Represents evaluated value of the cell.
         /// </summary>
-        private string cellValue;
+        protected string cellValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Cell"/> class.
         /// </summary>
         /// <param name="inputRowIndex">what row.</param>
         /// <param name="inputColumnIndex">what column.</param>
-        protected Cell(int inputRowIndex, int inputColumnIndex)
+        public Cell(int inputRowIndex, int inputColumnIndex)
         {
             this.rowIndex = inputRowIndex;
             this.columnIndex = inputColumnIndex;
@@ -53,7 +47,7 @@ namespace SpreadsheetEngine
         /// <summary>
         /// Gets the row index of this cell.
         /// </summary>
-        protected int RowIndex
+        public int RowIndex
         {
             get { return this.rowIndex; }
         }
@@ -61,7 +55,7 @@ namespace SpreadsheetEngine
         /// <summary>
         /// Gets the column index of this cell.
         /// </summary>
-        protected int ColumnIndex
+        public int ColumnIndex
         {
             get { return this.columnIndex; }
         }
@@ -69,7 +63,7 @@ namespace SpreadsheetEngine
         /// <summary>
         /// Gets or sets the cellText string value.
         /// </summary>
-        protected string CellText
+        public string CellText
         {
             get
             {
@@ -78,25 +72,19 @@ namespace SpreadsheetEngine
 
             set
             {
-                if (this.cellText != value)
+                if (this.cellText == value)
                 {
-                    this.cellText = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("CellText"));
+                    return;
                 }
+
+                this.cellText = value;
+                this.PropertyChanged(this, new PropertyChangedEventArgs("CellText"));
             }
         }
 
-        protected string CellValue
+        public string CellValue
         {
-            get
-            {
-                if (this.cellText != null && this.cellText.StartsWith("="))
-                {
-                    return this.value;
-                }
-
-                return this.cellText;
-            }
+            get { return this.cellValue; }
         }
     }
 }

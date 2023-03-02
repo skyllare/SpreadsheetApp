@@ -1,26 +1,42 @@
+// <copyright file="SpreadsheetTest.cs" company="Skyllar Estil">
+// Copyright (c) Skyllar Estil. All rights reserved.
+// </copyright>
+
 using SpreadsheetEngine;
 
 namespace SpreadsheetTesting
 {
+    /// <summary>
+    /// class that holds tests for spreadsheet methods.
+    /// </summary>
     public class Tests
     {
-
-        // test that the constructor makes a 2d array with the given parameters
+        /// <summary>
+        /// test that the spreadsheet constructor has the correct number of rows.
+        /// </summary>
         [Test]
-        public void Constructor_CreatesArrayOfCorrectSize()
+        public void Constructor_CreatesRowsOfCorrectSize()
         {
-            // Arrange
             int numRows = 3;
+            int numCols = 0;
+            Spreadsheet spreadsheet = new Spreadsheet(numRows, numCols);
+            int actualNumRows = spreadsheet.RowCount;
+            int actualNumCols = spreadsheet.ColumnCount;
+            Assert.That(actualNumRows, Is.EqualTo(numRows));
+        }
+
+        /// <summary>
+        /// test that the spreadsheet constructor has the correct number of columns.
+        /// </summary>
+        [Test]
+        public void Constructor_CreatesColumnsOfCorrectSize()
+        {
+            int numRows = 0;
             int numCols = 4;
             Spreadsheet spreadsheet = new Spreadsheet(numRows, numCols);
-
-            // Act
-            int actualNumRows = spreadsheet.Cells.GetLength(0);
-            int actualNumCols = spreadsheet.Cells.GetLength(1);
-
-            // Assert
-            Assert.AreEqual(numRows, actualNumRows);
-            Assert.AreEqual(numCols, actualNumCols);
+            int actualNumRows = spreadsheet.RowCount;
+            int actualNumCols = spreadsheet.ColumnCount;
+            Assert.That(actualNumCols, Is.EqualTo(numCols));
         }
     }
 }
