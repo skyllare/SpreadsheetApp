@@ -1,4 +1,4 @@
-// <copyright file="SpreadsheetTest.cs" company="Skyllar Estil">
+﻿// <copyright file="SpreadsheetTest.cs" company="Skyllar Estil">
 // Copyright (c) Skyllar Estil. All rights reserved.
 // </copyright>
 

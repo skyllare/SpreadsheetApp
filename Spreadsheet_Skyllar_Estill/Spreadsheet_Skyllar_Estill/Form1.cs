@@ -1,37 +1,61 @@
-using SpreadsheetEngine;
+// <copyright file="Form1.cs" company="Skyllar Estil">
+// Copyright (c) Skyllar Estil. All rights reserved.
+// </copyright>
+
 using System.ComponentModel;
 using System.Windows.Forms.VisualStyles;
+using SpreadsheetEngine;
 using static SpreadsheetEngine.Spreadsheet;
 
 namespace Spreadsheet_Skyllar_Estill
 {
     public partial class Form1 : Form
     {
-        private Spreadsheet spreadsheet;
+        /// <summary>
+        /// creates a spreadsheet object.
+        /// </summary>
+        private Spreadsheet? spreadsheet;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Form1"/> class.
+        /// Constructor for Form1.
+        /// </summary>
         public Form1()
         {
-            InitializeComponent();
-            spreadsheet = new Spreadsheet(50, 26);
-            spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
-            InitializeDataGrid();
+            this.InitializeComponent();
+            this.spreadsheet = new Spreadsheet(50, 26);
+            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
+            this.InitializeDataGrid();
         }
 
+        /// <summary>
+        /// Event handler when the cell property changes.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
         private void OnCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             Cell curCell = sender as Cell;
-            int row = curCell.RowIndex;
-            int col = curCell.ColumnIndex;
 
-            if (e.PropertyName == "CellText")
+            if (curCell != null)
             {
-                this.dataGridView1.Rows[row].Cells[col].Value = curCell.CellValue;
+                int row = curCell.RowIndex;
+                int col = curCell.ColumnIndex;
+
+                if (e.PropertyName == "CellText")
+                {
+                    this.dataGridView1.Rows[row].Cells[col].Value = curCell.CellValue;
+                }
             }
         }
 
-
+        /// <summary>
+        /// runs when the form runs.
+        /// </summary>
+        /// <param name="sender">reference to object that raise event.</param>
+        /// <param name="e">contains event data.</param>
         private void Form1_Load(object sender, EventArgs e)
         {
-
         }
 
         /// <summary>
@@ -53,25 +77,39 @@ namespace Spreadsheet_Skyllar_Estill
             }
         }
 
+        /// <summary>
+        /// Runs the demo when the button is pressed.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
         private void button1_Click(object sender, EventArgs e)
         {
             Random rnd = new Random();
-            for (int i =0; i<50;i++)
+            for (int i = 0; i < 50; i++)
             {
                 Cell curCell = this.spreadsheet.GetCell(rnd.Next(0, 49), rnd.Next(0, 26));
-                curCell.CellText = "Hello World!";
+                if (curCell != null)
+                {
+                    curCell.CellText = "Hello World!";
+                }
             }
 
             for (int i = 0; i < 50; i++)
             {
                 Cell curCell = this.spreadsheet.GetCell(i, 1);
-                curCell.CellText = "This is cell B" + (i+1);
+                if (curCell != null)
+                {
+                    curCell.CellText = "This is cell B" + (i + 1);
+                }
             }
 
             for (int i = 0; i < 50; i++)
             {
                 Cell curCell = this.spreadsheet.GetCell(i, 0);
-                curCell.CellText = "=B" + (i);
+                if (curCell != null)
+                {
+                    curCell.CellText = "=B" + i;
+                }
             }
         }
     }
