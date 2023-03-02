@@ -151,7 +151,6 @@ namespace SpreadsheetEngine
                 get { return this.cellValue; }
                 set { this.cellValue = value; }
             }
-
         }
     }
 }

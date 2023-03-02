@@ -9,6 +9,9 @@ using static SpreadsheetEngine.Spreadsheet;
 
 namespace Spreadsheet_Skyllar_Estill
 {
+    /// <summary>
+    /// class for the form the spreadsheet is built in.
+    /// </summary>
     public partial class Form1 : Form
     {
         /// <summary>
