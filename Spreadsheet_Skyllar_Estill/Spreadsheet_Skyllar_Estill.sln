@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spreadsheet_Skyllar_Estill", "Spreadsheet_Skyllar_Estill\Spreadsheet_Skyllar_Estill.csproj", "{2E20260D-18D4-4AE7-9B18-809638CB595F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spreadsheet_Skyllar_Estill", "Spreadsheet_Skyllar_Estill\Spreadsheet_Skyllar_Estill.csproj", "{2E20260D-18D4-4AE7-9B18-809638CB595F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetEngine", "SpreadsheetEngine\SpreadsheetEngine.csproj", "{0B0B039F-C041-4D5E-A228-67462E6CC9E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpreadsheetEngine", "SpreadsheetEngine\SpreadsheetEngine.csproj", "{0B0B039F-C041-4D5E-A228-67462E6CC9E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetTesting", "SpreadsheetTesting\SpreadsheetTesting.csproj", "{4A2D74F2-5FEA-46D2-A9D0-BB71E2010560}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{0B0B039F-C041-4D5E-A228-67462E6CC9E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B0B039F-C041-4D5E-A228-67462E6CC9E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B0B039F-C041-4D5E-A228-67462E6CC9E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A2D74F2-5FEA-46D2-A9D0-BB71E2010560}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A2D74F2-5FEA-46D2-A9D0-BB71E2010560}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A2D74F2-5FEA-46D2-A9D0-BB71E2010560}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A2D74F2-5FEA-46D2-A9D0-BB71E2010560}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
