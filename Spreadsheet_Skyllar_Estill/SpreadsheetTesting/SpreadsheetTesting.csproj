@@ -20,4 +20,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="SpreadsheetEngine">
+      <HintPath>..\SpreadsheetEngine\bin\Debug\net6.0\SpreadsheetEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
