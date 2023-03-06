@@ -13,10 +13,6 @@ namespace SpreadsheetEngine
     public abstract class Cell : INotifyPropertyChanged
     {
         /// <summary>
-        /// Event for when the cell text is changed.
-        /// </summary>
-        public event PropertyChangedEventHandler? PropertyChanged = delegate { };
-        /// <summary>
         /// private read-only value for the row index.
         /// </summary>
         protected readonly int rowIndex;
@@ -35,6 +31,11 @@ namespace SpreadsheetEngine
         /// Represents evaluated value of the cell.
         /// </summary>
         protected string cellValue;
+
+        /// <summary>
+        /// Event for when the cell text is changed.
+        /// </summary>
+        public event PropertyChangedEventHandler? PropertyChanged = delegate { };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Cell"/> class.
