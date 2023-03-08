@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HW5ExpressionTree", "HW5ExpressionTree\HW5ExpressionTree.csproj", "{EDB57945-C076-47A3-9606-637154A8259B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HW5ExpressionTree", "HW5ExpressionTree\HW5ExpressionTree.csproj", "{EDB57945-C076-47A3-9606-637154A8259B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionTree", "ExpressionTree\ExpressionTree.csproj", "{B3505A9C-B32F-429F-9B33-90A22F440FD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpressionTreeTests", "ExpressionTreeTests\ExpressionTreeTests.csproj", "{019C9B3D-4ADB-4D9F-910A-6F58BA6CC49D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionTreeTests", "ExpressionTreeTests\ExpressionTreeTests.csproj", "{019C9B3D-4ADB-4D9F-910A-6F58BA6CC49D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionTreeEngine", "ExpressionTreeEngine\ExpressionTreeEngine.csproj", "{4632A040-4724-422F-AA15-6482016078A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{EDB57945-C076-47A3-9606-637154A8259B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDB57945-C076-47A3-9606-637154A8259B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDB57945-C076-47A3-9606-637154A8259B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B3505A9C-B32F-429F-9B33-90A22F440FD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3505A9C-B32F-429F-9B33-90A22F440FD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3505A9C-B32F-429F-9B33-90A22F440FD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3505A9C-B32F-429F-9B33-90A22F440FD3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{019C9B3D-4ADB-4D9F-910A-6F58BA6CC49D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{019C9B3D-4ADB-4D9F-910A-6F58BA6CC49D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{019C9B3D-4ADB-4D9F-910A-6F58BA6CC49D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{019C9B3D-4ADB-4D9F-910A-6F58BA6CC49D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4632A040-4724-422F-AA15-6482016078A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4632A040-4724-422F-AA15-6482016078A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4632A040-4724-422F-AA15-6482016078A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4632A040-4724-422F-AA15-6482016078A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

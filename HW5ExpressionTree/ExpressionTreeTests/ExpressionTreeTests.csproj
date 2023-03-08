@@ -32,6 +32,9 @@
     <Reference Include="ExpressionTree">
       <HintPath>..\ExpressionTree\bin\Debug\net6.0\ExpressionTree.dll</HintPath>
     </Reference>
+    <Reference Include="ExpressionTreeEngine">
+      <HintPath>..\ExpressionTree\bin\Debug\net6.0\ExpressionTreeEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

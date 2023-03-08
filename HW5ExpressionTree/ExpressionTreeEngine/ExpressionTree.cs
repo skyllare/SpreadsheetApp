@@ -1,8 +1,6 @@
 ﻿// <copyright file="ExpressionTree.cs" company="Skyllar Estil">
 // Copyright (c) Skyllar Estil. All rights reserved.
 // </copyright>
-using System;
-using System.IO;
 
 namespace ExpressionTreeEngine
 {
@@ -17,7 +15,7 @@ namespace ExpressionTreeEngine
         /// <param name="expression">Expression tree is made for.</param>
         public ExpressionTree(string expression)
         {
-            
+
         }
 
         /// <summary>
