@@ -10,7 +10,7 @@ namespace ExpressionTreeEngine
     {
         private static List<char> TypesOfOperators = new List<char> { '+', '-', '/', '*' };
 
-        public OperatorNodeFactory() 
+        public OperatorNodeFactory()
         {
         }
 
@@ -18,7 +18,7 @@ namespace ExpressionTreeEngine
         {
             if (TypesOfOperators.Contains(op))
             {
-                return new ExpressionTreeNode(op);
+               // return new ExpressionTreeNode(op);
             }
 
             return null;

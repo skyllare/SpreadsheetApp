@@ -13,14 +13,12 @@ namespace ExpressionTreeEngine
         private ExpressionTreeNode left;
         private ExpressionTreeNode right;
 
-        public ExpressionTreeNode(char op)
+        public ExpressionTreeNode()
         {
-            this.data = op;
-            left = right = null; 
         }
 
-        private void Evaluate()
-        { 
+        public void Evaluate()
+        {
         }
     }
 }

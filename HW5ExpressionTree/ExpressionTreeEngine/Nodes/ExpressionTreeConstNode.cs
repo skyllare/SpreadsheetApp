@@ -8,5 +8,9 @@ namespace ExpressionTreeEngine
 {
     internal class ExpressionTreeConstNode : ExpressionTreeNode
     {
+        private int value;
+
+        public int Value
+        { get { return value; } }
     }
 }
