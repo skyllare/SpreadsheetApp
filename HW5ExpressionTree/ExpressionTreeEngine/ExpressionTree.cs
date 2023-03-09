@@ -9,13 +9,17 @@ namespace ExpressionTreeEngine
     /// </summary>
     public class ExpressionTree
     {
+        private ExpressionTreeNode root;
+
+        private Dictionary<string, double> variables = new Dictionary<string, double>();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
         /// </summary>
         /// <param name="expression">Expression tree is made for.</param>
         public ExpressionTree(string expression)
         {
-
+            root = MakeExpressionTree(expression);
         }
 
         /// <summary>
@@ -35,6 +39,50 @@ namespace ExpressionTreeEngine
         public double Evaluate()
         {
             return 0;
+        }
+
+        private ExpressionTreeNode MakeExpressionTree(string expression)
+        {
+            Stack<int> expressionStack = new Stack<int>();
+
+            if (expression == null)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < expression.Length; i++)
+            {
+
+                int j = i;
+                string temp = string.Empty;
+                while (!this.isOperator(expression.Substring(j)))
+                {
+                    temp += expression.Substring(j);
+                    j++;
+                }
+
+                int sTemp = Convert.ToInt32(temp);
+                expressionStack.Push(sTemp);
+
+                if (this.isOperator(expression.Substring(i)))
+                {
+
+                }
+            }
+
+            return null;
+        }
+
+        private bool isOperator(string x)
+        {
+            if (x == "+" || x == "-" || x == "/" || x == "*")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

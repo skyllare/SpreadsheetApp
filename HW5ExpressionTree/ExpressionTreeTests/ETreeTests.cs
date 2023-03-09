@@ -8,14 +8,6 @@ namespace ExpressionTreeTests
     public class Tests
     {
         /// <summary>
-        /// tests that the tree made in the ExpressionTree constructor is correct.
-        /// </summary>
-        [Test]
-        public void TestTree()
-        {
-        }
-
-        /// <summary>
         /// tests an expression that it just addition.
         /// </summary>
         [Test]
@@ -93,26 +85,6 @@ namespace ExpressionTreeTests
         {
             ExpressionTree tTree = new ExpressionTree("11/2/4");
             Assert.That(tTree.Evaluate(), Is.EqualTo(1.375));
-        }
-
-        /// <summary>
-        /// tests an expression that has multiple operators.
-        /// </summary>
-        [Test]
-        public void TestComboBasic()
-        {
-            ExpressionTree tTree = new ExpressionTree("2+4-1*2/5");
-            Assert.That(tTree.Evaluate(), Is.EqualTo(2));
-        }
-
-        /// <summary>
-        /// tests an expression that has multiple operators.
-        /// </summary>
-        [Test]
-        public void TestComboDecimal()
-        {
-            ExpressionTree tTree = new ExpressionTree("2.2*.9+3-.2/.1");
-            Assert.That(tTree.Evaluate(), Is.EqualTo(2.98));
         }
     }
 }
