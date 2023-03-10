@@ -42,7 +42,7 @@ namespace ExpressionTreeEngine
         /// <returns>The value of the expression.</returns>
         public double Evaluate()
         {
-            return 0;
+
         }
 
         /// <summary>

@@ -20,6 +20,6 @@ namespace ExpressionTreeEngine.Nodes
 
         protected abstract void PerformOperation();
 
-
+  
     }
 }

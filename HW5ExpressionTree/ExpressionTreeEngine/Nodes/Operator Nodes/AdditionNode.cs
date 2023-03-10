@@ -23,6 +23,11 @@ namespace ExpressionTreeEngine
         {
         }
 
+        protected void Evaluate()
+        {
+            PerformOperation();
+        }
+
         /// <summary>
         /// adds the left and right node together.
         /// </summary>
