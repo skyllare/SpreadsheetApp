@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpressionTreeEngine
+namespace ExpressionTreeEngine.Nodes
 {
     /// <summary>
     /// class for expressions/ operands.
@@ -25,8 +25,8 @@ namespace ExpressionTreeEngine
         /// </summary>
         public double Data
         {
-            get { return this.data; } 
-            set { this.data = value; }
+            get { return data; }
+            set { data = value; }
         }
     }
 }

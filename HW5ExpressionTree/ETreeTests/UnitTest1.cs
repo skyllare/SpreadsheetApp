@@ -1,7 +1,6 @@
 // <copyright file="ETreeTests.cs" company="Skyllar Estil">
 // Copyright (c) Skyllar Estil. All rights reserved.
 // </copyright>
-/*
 using ExpressionTreeEngine;
 
 namespace ExpressionTreeTests
@@ -89,4 +88,3 @@ namespace ExpressionTreeTests
         }
     }
 }
-*/

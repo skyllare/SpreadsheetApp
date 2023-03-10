@@ -2,6 +2,7 @@
 // Copyright (c) Skyllar Estil. All rights reserved.
 // </copyright>
 
+using ExpressionTreeEngine.Nodes;
 using System;
 
 namespace ExpressionTreeEngine
@@ -52,13 +53,16 @@ namespace ExpressionTreeEngine
         private ExpressionTreeNode MakeExpressionTree(string expression)
         {
             Stack<ExpressionTreeNode> sTree = new Stack<ExpressionTreeNode>();
+
             for (int i = 0; i < expression.Length; i++)
             {
                 if (OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
                 {
                     ExpressionTreeNode opNode = OperatorNodeFactory.CreateOperatorNode(expression[i]);
-                    opNode = this.root;
+
+                    this.root = opNode;
                     opNode.Left = sTree.Pop();
+
                     if (sTree.Count != 0)
                     {
                         opNode.Right = sTree.Pop();

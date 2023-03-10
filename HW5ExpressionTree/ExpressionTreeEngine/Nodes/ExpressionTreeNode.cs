@@ -5,7 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpressionTreeEngine
+namespace ExpressionTreeEngine.Nodes
 {
     /// <summary>
     /// abstract bade class for all mode types.
@@ -29,20 +29,20 @@ namespace ExpressionTreeEngine
 
         public ExpressionTreeNode Right
         {
-            get { return this; } 
-            set { this.right = value; }
+            get { return this; }
+            set { right = value; }
         }
 
         public ExpressionTreeNode Left
         {
             get { return this; }
-            set { this.left = value; }
+            set { left = value; }
         }
 
         public char Data
         {
-            get { return this.data; }
-            set { this.data = value; }
+            get { return data; }
+            set { data = value; }
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTreeNode"/> class.

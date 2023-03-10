@@ -2,13 +2,13 @@
 // Copyright (c) Skyllar Estil. All rights reserved.
 // </copyright>
 
-using ExpressionTreeEngine;
+using ;
 
-class ExTree
+class HW5ExpressionTree
 {
 
 
-    static public void Main(String[] args)
+    public static void Main(string[] args)
     {
         ExpressionTree test = new ExpressionTree("1+2+4");
     }
