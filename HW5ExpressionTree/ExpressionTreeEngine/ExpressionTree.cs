@@ -14,7 +14,7 @@ namespace ExpressionTreeEngine
         /// <summary>
         /// root node of the tree.
         /// </summary>
-        public ExpressionTreeNode root;
+        private ExpressionTreeNode root;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
@@ -49,7 +49,7 @@ namespace ExpressionTreeEngine
         /// </summary>
         /// <param name="expression">Expression that the tree is made after.</param>
         /// <returns>root node.</returns>
-        public ExpressionTreeNode MakeExpressionTree(string expression)
+        private ExpressionTreeNode MakeExpressionTree(string expression)
         {
             Stack<ExpressionTreeNode> sTree = new Stack<ExpressionTreeNode>();
             for (int i = 0; i < expression.Length; i++)
