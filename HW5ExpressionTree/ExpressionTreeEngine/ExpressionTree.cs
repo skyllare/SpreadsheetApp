@@ -53,31 +53,34 @@ namespace ExpressionTreeEngine
         private ExpressionTreeNode MakeExpressionTree(string expression)
         {
             Stack<ExpressionTreeNode> sTree = new Stack<ExpressionTreeNode>();
+            ExpressionTreeNode t1, t2, temp;
+            expression = ShuntingYardAlgorithm(expression);
 
             for (int i = 0; i < expression.Length; i++)
             {
-                if (OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
+                if (!OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
                 {
-                    ExpressionTreeNode opNode = OperatorNodeFactory.CreateOperatorNode(expression[i]);
-
-                    this.root = opNode;
-                    opNode.Left = sTree.Pop();
-
-                    if (sTree.Count != 0)
-                    {
-                        opNode.Right = sTree.Pop();
-                    }
-                    sTree.Push(opNode);
+                    temp = new ExpressionTreeConstNode();
+                    temp.Data= expression[i];
+                    sTree.Push(temp);
                 }
                 else
                 {
-                    ExpressionTreeConstNode tempNode = new ExpressionTreeConstNode();
-                    tempNode.Data = expression[i];
-                    sTree.Push(tempNode);
+                    temp = OperatorNodeFactory.CreateOperatorNode(expression[i]);
+                    temp.Data = expression[i];
+                    t1 = sTree.Pop();
+                    t2 = sTree.Pop();
+                    temp.Left = t2;
+                    temp.Right = t1;
+                    sTree.Push(temp);
+
                 }
+               
 
             }
-            return this.root;
+
+            temp = sTree.Pop();
+            return temp;
 
         }
 
@@ -90,6 +93,11 @@ namespace ExpressionTreeEngine
             {
                 if (OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
                 {
+                    if (operatorStack.Count != 0)
+                    {
+                        output += operatorStack.Peek();
+                        operatorStack.Pop();
+                    }
                     operatorStack.Push(expression[i]);
                 }
                 else
@@ -98,9 +106,10 @@ namespace ExpressionTreeEngine
                 }
             }
 
-            for (int i = 0; i < operatorStack.Count; i++)
+            for (int i = 0; i <= operatorStack.Count; i++)
             {
-                output += operatorStack.Pop();
+                output += operatorStack.Peek();
+                operatorStack.Pop();
             }
 
             return output;

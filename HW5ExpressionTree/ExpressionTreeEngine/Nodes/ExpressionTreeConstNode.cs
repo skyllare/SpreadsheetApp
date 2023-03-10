@@ -15,6 +15,7 @@ namespace ExpressionTreeEngine.Nodes
     /// </summary>
     internal class ExpressionTreeConstNode : ExpressionTreeNode
     {
+        public ExpressionTreeConstNode() { }
         /// <summary>
         /// the data/ the operand.
         /// </summary>
