@@ -4,7 +4,12 @@
 
 using ExpressionTreeEngine;
 
-int Main ()
+class ExTree
 {
-    return 0;
+
+
+    static public void Main(String[] args)
+    {
+        ExpressionTree test = new ExpressionTree("1+2+4");
+    }
 }

@@ -2,6 +2,8 @@
 // Copyright (c) Skyllar Estil. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace ExpressionTreeEngine
 {
     /// <summary>
@@ -9,9 +11,10 @@ namespace ExpressionTreeEngine
     /// </summary>
     public class ExpressionTree
     {
-        private ExpressionTreeNode root;
-
-        private Dictionary<string, double> variables = new Dictionary<string, double>();
+        /// <summary>
+        /// root node of the tree.
+        /// </summary>
+        public ExpressionTreeNode root;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
@@ -19,7 +22,7 @@ namespace ExpressionTreeEngine
         /// <param name="expression">Expression tree is made for.</param>
         public ExpressionTree(string expression)
         {
-            root = MakeExpressionTree(expression);
+            this.root = this.MakeExpressionTree(expression);
         }
 
         /// <summary>
@@ -41,48 +44,62 @@ namespace ExpressionTreeEngine
             return 0;
         }
 
-        private ExpressionTreeNode MakeExpressionTree(string expression)
+        /// <summary>
+        /// Makes the expression tree.
+        /// </summary>
+        /// <param name="expression">Expression that the tree is made after.</param>
+        /// <returns>root node.</returns>
+        public ExpressionTreeNode MakeExpressionTree(string expression)
         {
-            Stack<int> expressionStack = new Stack<int>();
-
-            if (expression == null)
-            {
-                return null;
-            }
-
+            Stack<ExpressionTreeNode> sTree = new Stack<ExpressionTreeNode>();
             for (int i = 0; i < expression.Length; i++)
             {
-
-                int j = i;
-                string temp = string.Empty;
-                while (!this.isOperator(expression.Substring(j)))
+                if (OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
                 {
-                    temp += expression.Substring(j);
-                    j++;
+                    ExpressionTreeNode opNode = OperatorNodeFactory.CreateOperatorNode(expression[i]);
+                    opNode = this.root;
+                    opNode.Left = sTree.Pop();
+                    if (sTree.Count != 0)
+                    {
+                        opNode.Right = sTree.Pop();
+                    }
+                    sTree.Push(opNode);
+                }
+                else
+                {
+                    ExpressionTreeConstNode tempNode = new ExpressionTreeConstNode();
+                    tempNode.Data = expression[i];
+                    sTree.Push(tempNode);
                 }
 
-                int sTemp = Convert.ToInt32(temp);
-                expressionStack.Push(sTemp);
-
-                if (this.isOperator(expression.Substring(i)))
-                {
-
-                }
             }
+            return this.root;
 
-            return null;
         }
 
-        private bool isOperator(string x)
+
+        private string ShuntingYardAlgorithm(string expression)
         {
-            if (x == "+" || x == "-" || x == "/" || x == "*")
+            Stack<char> operatorStack = new Stack<char>();
+            string output = string.Empty;
+            for (int i = 0; i < expression.Length; i++)
             {
-                return true;
+                if (OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
+                {
+                    operatorStack.Push(expression[i]);
+                }
+                else
+                {
+                    output += expression[i];
+                }
             }
-            else
+
+            for (int i = 0; i < operatorStack.Count; i++)
             {
-                return false;
+                output += operatorStack.Pop();
             }
+
+            return output;
         }
     }
 }

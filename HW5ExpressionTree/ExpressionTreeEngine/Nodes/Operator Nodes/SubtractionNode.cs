@@ -17,7 +17,7 @@ namespace ExpressionTreeEngine
         protected override void PerformOperation()
         {
             // Subtract the values of the left and right operands
-            double result = ((ExpressionTreeConstNode)this.leftOperand).Value - ((ExpressionTreeConstNode)this.rightOperand).Value;
+            double result = ((ExpressionTreeConstNode)this.leftOperand).Data - ((ExpressionTreeConstNode)this.rightOperand).Data;
             Console.WriteLine($"Result of addition: {result}");
         }
 
