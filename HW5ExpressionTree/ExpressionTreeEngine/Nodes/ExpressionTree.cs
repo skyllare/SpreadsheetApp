@@ -61,8 +61,11 @@ namespace ExpressionTreeEngine
             {
                 if (!OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
                 {
-                    
-                    sOutput.Push(new ExpressionTreeConstNode(Convert.ToDouble(expression[i].ToString())));
+                    if (Char.IsDigit(expression[i]))
+                    {
+                        sOutput.Push(new ExpressionTreeConstNode(Convert.ToDouble(expression[i].ToString())));
+                    }
+                   
                     
                 }
                 else
