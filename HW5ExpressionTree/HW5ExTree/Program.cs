@@ -4,8 +4,8 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.Design;
-using ExpressionTreeEngine.Nodes;
 using ExpressionTreeEngine;
+using ExpressionTreeEngine.Nodes;
 
 class Program
 {
@@ -30,12 +30,13 @@ class Program
                 Console.WriteLine("Enter variable name");
                 string curVName = Console.ReadLine();
                 Console.WriteLine("Enter varibale value");
-                int vValue = Convert.ToInt32(Console.ReadLine());
+                double vValue = Convert.ToInt32(Console.ReadLine());
+                ExpressionTreeVariableNode vNode = new ExpressionTreeVariableNode(curVName, vValue);
             }
             else if (userInput == 3)
             {
                 ExpressionTree test = new ExpressionTree(expression);
-                test.Evaluate();
+                double evaluation = test.Evaluate();
             }
         }
         while (userInput != 4);

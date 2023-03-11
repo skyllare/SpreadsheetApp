@@ -10,14 +10,16 @@ namespace ExpressionTreeEngine.Nodes
     internal abstract class ExpressionTreeOperatorNode : ExpressionTreeNode
     {
 
-        public ExpressionTreeNode? Left { get; set; }
-        public ExpressionTreeNode? Right { get; set; }
+    
 
-        public abstract double Evaluate();
+        public ExpressionTreeOperatorNode()
+        {
+        }
 
-
-
-
-
+        public override double Evaluate()
+        {
+            
+            return 0.0;
+        }
     }
 }

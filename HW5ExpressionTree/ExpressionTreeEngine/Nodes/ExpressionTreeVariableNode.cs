@@ -6,8 +6,36 @@ using System.Threading.Tasks;
 
 namespace ExpressionTreeEngine.Nodes
 {
-    internal class ExpressionTreeVariableNode : ExpressionTreeNode
+    public class ExpressionTreeVariableNode : ExpressionTreeNode
     {
+
+        private string vName;
+
+        private double vValue;
+
+        public string VName
+        {
+            get { return vName; }
+            set { vName = value; }
+        }
+
+        public double VValue
+        {
+            get { return vValue; }
+            set { vValue = value; }
+        }
+
+        public ExpressionTreeVariableNode(string name, double value)
+        {
+            vValue = value;
+            vName = name;
+        }
+
+        public override double Evaluate()
+        {
+            double rValue = 0.0;
+            return rValue;
+        }
     }
 }
 

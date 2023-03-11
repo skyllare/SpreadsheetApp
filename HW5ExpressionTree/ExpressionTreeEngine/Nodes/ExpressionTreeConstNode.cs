@@ -15,7 +15,10 @@ namespace ExpressionTreeEngine.Nodes
     /// </summary>
     internal class ExpressionTreeConstNode : ExpressionTreeNode
     {
-        public ExpressionTreeConstNode() { }
+        public ExpressionTreeConstNode(double eData) 
+        { 
+            this.data = eData;
+        }
         /// <summary>
         /// the data/ the operand.
         /// </summary>
@@ -28,6 +31,12 @@ namespace ExpressionTreeEngine.Nodes
         {
             get { return data; }
             set { data = value; }
+        }
+
+        public override double Evaluate()
+        {
+            Console.WriteLine(this.data);
+            return this.data;
         }
     }
 }

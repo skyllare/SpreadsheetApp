@@ -10,8 +10,9 @@ namespace ExpressionTreeEngine.Nodes
     /// <summary>
     /// abstract bade class for all mode types.
     /// </summary>
-    internal abstract class ExpressionTreeNode
+    public abstract class ExpressionTreeNode
     {
+
         /// <summary>
         /// node data.
         /// </summary>
@@ -29,13 +30,14 @@ namespace ExpressionTreeEngine.Nodes
 
         public ExpressionTreeNode Right
         {
-            get { return this; }
+            get { return right; }
             set { right = value; }
         }
 
         public ExpressionTreeNode Left
         {
-            get { return this; }
+            get { return left; }
+
             set { left = value; }
         }
 
@@ -54,8 +56,6 @@ namespace ExpressionTreeEngine.Nodes
         /// <summary>
         /// evaluates the node and it's children.
         /// </summary>
-        public void Evaluate()
-        {
-        }
+        public abstract double Evaluate();
     }
 }

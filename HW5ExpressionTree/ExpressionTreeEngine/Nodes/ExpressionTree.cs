@@ -15,7 +15,7 @@ namespace ExpressionTreeEngine
         /// <summary>
         /// root node of the tree.
         /// </summary>
-        private ExpressionTreeNode root;
+        private ExpressionTreeNode? root = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
@@ -33,7 +33,7 @@ namespace ExpressionTreeEngine
         /// <param name="variableValue"></param>
         public void SetVariable(string variableName, double variableValue)
         {
-
+            
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace ExpressionTreeEngine
         /// <returns>The value of the expression.</returns>
         public double Evaluate()
         {
-            return 0;
+            return root.Evaluate();
         }
 
         /// <summary>
@@ -60,8 +60,7 @@ namespace ExpressionTreeEngine
             {
                 if (!OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
                 {
-                    temp = new ExpressionTreeConstNode();
-                    temp.Data = expression[i];
+                    temp = new ExpressionTreeConstNode(expression[i]);
                     sTree.Push(temp);
                 }
                 else
