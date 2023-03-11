@@ -35,7 +35,6 @@ namespace ExpressionTreeEngine.Nodes
 
         public override double Evaluate()
         {
-            Console.WriteLine(this.data);
             return this.data;
         }
     }

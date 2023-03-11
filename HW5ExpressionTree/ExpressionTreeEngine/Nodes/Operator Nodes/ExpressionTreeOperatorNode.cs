@@ -9,7 +9,8 @@ namespace ExpressionTreeEngine.Nodes
 {
     internal abstract class ExpressionTreeOperatorNode : ExpressionTreeNode
     {
-
+        public ExpressionTreeNode Left { get; set; }
+        public ExpressionTreeNode Right { get; set; }
     
 
         public ExpressionTreeOperatorNode()

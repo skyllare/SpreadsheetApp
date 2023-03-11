@@ -13,49 +13,8 @@ namespace ExpressionTreeEngine.Nodes
     public abstract class ExpressionTreeNode
     {
 
-        /// <summary>
-        /// node data.
-        /// </summary>
-        private char data;
+       
 
-        /// <summary>
-        /// left node.
-        /// </summary>
-        private ExpressionTreeNode left;
-
-        /// <summary>
-        /// right node.
-        /// </summary>
-        private ExpressionTreeNode right;
-
-        public ExpressionTreeNode Right
-        {
-            get { return right; }
-            set { right = value; }
-        }
-
-        public ExpressionTreeNode Left
-        {
-            get { return left; }
-
-            set { left = value; }
-        }
-
-        public char Data
-        {
-            get { return data; }
-            set { data = value; }
-        }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ExpressionTreeNode"/> class.
-        /// </summary>
-        public ExpressionTreeNode()
-        {
-        }
-
-        /// <summary>
-        /// evaluates the node and it's children.
-        /// </summary>
         public abstract double Evaluate();
     }
 }

@@ -19,7 +19,7 @@ namespace ExpressionTreeEngine
         public override double Evaluate()
         {
 
-            return 0;
+            return Left.Evaluate() - Right.Evaluate();
         }
 
     }

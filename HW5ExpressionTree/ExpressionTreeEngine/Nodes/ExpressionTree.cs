@@ -16,7 +16,9 @@ namespace ExpressionTreeEngine
         /// root node of the tree.
         /// </summary>
         private ExpressionTreeNode? root = null;
-
+        private OperatorNodeFactory opFactory = new OperatorNodeFactory();
+        private Dictionary<string, double> variables = new();
+        private Stack<ExpressionTreeNode> sOutput = new Stack<ExpressionTreeNode>();
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
         /// </summary>
@@ -33,7 +35,7 @@ namespace ExpressionTreeEngine
         /// <param name="variableValue"></param>
         public void SetVariable(string variableName, double variableValue)
         {
-            
+            variables[variableName] = variableValue;
         }
 
         /// <summary>
@@ -52,19 +54,28 @@ namespace ExpressionTreeEngine
         /// <returns>root node.</returns>
         private ExpressionTreeNode MakeExpressionTree(string expression)
         {
-            Stack<ExpressionTreeNode> sTree = new Stack<ExpressionTreeNode>();
-            ExpressionTreeNode t1, t2, temp;
+
+            ExpressionTreeNode t1, t2;
             expression = ShuntingYardAlgorithm(expression);
 
             for (int i = 0; i < expression.Length; i++)
             {
                 if (!OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
                 {
-                    temp = new ExpressionTreeConstNode(expression[i]);
-                    sTree.Push(temp);
+
+                    sOutput.Push(new ExpressionTreeConstNode(Convert.ToDouble(expression[i].ToString())));
+
                 }
                 else
                 {
+                    ExpressionTreeOperatorNode temp = OperatorNodeFactory.CreateOperatorNode(expression[i]);
+
+                    if (sOutput.Count != 0)
+                    {
+                        temp.Left = sOutput.Pop();
+                        temp.Right = sOutput.Pop();
+                    }
+                    /*
                     temp = OperatorNodeFactory.CreateOperatorNode(expression[i]);
                     temp.Data = expression[i];
                     t1 = sTree.Pop();
@@ -72,14 +83,16 @@ namespace ExpressionTreeEngine
                     temp.Left = t2;
                     temp.Right = t1;
                     sTree.Push(temp);
+                   */
+                    sOutput.Push(temp);
 
                 }
-
+                
 
             }
 
-            temp = sTree.Pop();
-            return temp;
+            
+            return sOutput.Pop();
 
         }
 

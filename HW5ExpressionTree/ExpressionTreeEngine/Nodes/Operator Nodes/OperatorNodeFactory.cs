@@ -25,7 +25,7 @@ namespace ExpressionTreeEngine
         }
 
         //creates operator nodes.
-        public static ExpressionTreeNode CreateOperatorNode(char op)
+        public static ExpressionTreeOperatorNode CreateOperatorNode(char op)
         {
             if (TypesOfOperators.Contains(op))
             {

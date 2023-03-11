@@ -22,7 +22,7 @@ namespace ExpressionTreeEngine
 
         public override double Evaluate()
         {
-            return (this.Left.Data * this.Right.Data);
+            return Left.Evaluate() * Right.Evaluate();
         }
     
     }
