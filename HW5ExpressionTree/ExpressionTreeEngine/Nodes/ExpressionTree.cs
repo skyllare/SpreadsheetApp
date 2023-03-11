@@ -54,17 +54,16 @@ namespace ExpressionTreeEngine
         /// <returns>root node.</returns>
         private ExpressionTreeNode MakeExpressionTree(string expression)
         {
-
-            ExpressionTreeNode t1, t2;
             expression = ShuntingYardAlgorithm(expression);
+        
 
             for (int i = 0; i < expression.Length; i++)
             {
                 if (!OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
                 {
-
+                    
                     sOutput.Push(new ExpressionTreeConstNode(Convert.ToDouble(expression[i].ToString())));
-
+                    
                 }
                 else
                 {
@@ -75,25 +74,12 @@ namespace ExpressionTreeEngine
                         temp.Left = sOutput.Pop();
                         temp.Right = sOutput.Pop();
                     }
-                    /*
-                    temp = OperatorNodeFactory.CreateOperatorNode(expression[i]);
-                    temp.Data = expression[i];
-                    t1 = sTree.Pop();
-                    t2 = sTree.Pop();
-                    temp.Left = t2;
-                    temp.Right = t1;
-                    sTree.Push(temp);
-                   */
+
                     sOutput.Push(temp);
 
-                }
-                
-
-            }
-
-            
+                }                
+            }            
             return sOutput.Pop();
-
         }
 
 

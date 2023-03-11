@@ -37,6 +37,7 @@ class Program
             {
                 ExpressionTree test = new ExpressionTree(expression);
                 double evaluation = test.Evaluate();
+                Console.WriteLine(evaluation);
             }
         }
         while (userInput != 4);
