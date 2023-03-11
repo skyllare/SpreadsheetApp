@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="ExpressionTreeVariableNode.cs" company="Skyllar Estil">
+// Copyright (c) Skyllar Estil. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,36 +10,54 @@ using System.Threading.Tasks;
 
 namespace ExpressionTreeEngine.Nodes
 {
+    /// <summary>
+    /// class for variable nodes.
+    /// </summary>
     public class ExpressionTreeVariableNode : ExpressionTreeNode
     {
-
+        /// <summary>
+        /// name of variable.
+        /// </summary>
         private string vName;
 
-        private double vValue;
+        /// <summary>
+        /// dictionary of names and values.
+        /// </summary>
+        private Dictionary<string, double> vValue;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExpressionTreeVariableNode"/> class.
+        /// </summary>
+        /// <param name="name">name of variables.</param>
+        /// <param name="variables">dictionary.</param>
+        public ExpressionTreeVariableNode(string name, ref Dictionary<string, double> variables)
+        {
+            this.vName = name;
+            this.vValue = variables;
+        }
+
+        /// <summary>
+        /// Gets or sets the varibale name.
+        /// </summary>
         public string VName
         {
-            get { return vName; }
-            set { vName = value; }
+            get { return this.vName; }
+            set { this.vName = value; }
         }
 
-        public double VValue
-        {
-            get { return vValue; }
-            set { vValue = value; }
-        }
-
-        public ExpressionTreeVariableNode(string name, double value)
-        {
-            vValue = value;
-            vName = name;
-        }
-
+        /// <summary>
+        /// evaluation for varibale nodes.
+        /// </summary>
+        /// <returns>the value of the variable.</returns>
         public override double Evaluate()
         {
             double rValue = 0.0;
+            if (this.vValue.ContainsKey(this.vName))
+            {
+                rValue = this.vValue[this.vName];
+            }
+
             return rValue;
         }
     }
 }
-

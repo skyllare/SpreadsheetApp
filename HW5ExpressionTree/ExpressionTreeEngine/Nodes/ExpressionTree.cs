@@ -2,8 +2,8 @@
 // Copyright (c) Skyllar Estil. All rights reserved.
 // </copyright>
 
-using ExpressionTreeEngine.Nodes;
 using System;
+using ExpressionTreeEngine.Nodes;
 
 namespace ExpressionTreeEngine
 {
@@ -16,9 +16,17 @@ namespace ExpressionTreeEngine
         /// root node of the tree.
         /// </summary>
         private ExpressionTreeNode? root = null;
-        private OperatorNodeFactory opFactory = new OperatorNodeFactory();
-        private Dictionary<string, double> variables = new();
+
+        /// <summary>
+        /// variable names and values.
+        /// </summary>
+        private Dictionary<string, double> variables = new ();
+
+        /// <summary>
+        /// used to hold the tree.
+        /// </summary>
         private Stack<ExpressionTreeNode> sOutput = new Stack<ExpressionTreeNode>();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
         /// </summary>
@@ -31,11 +39,11 @@ namespace ExpressionTreeEngine
         /// <summary>
         /// Sets the specified variable within the ExpressionTree variables dictionary.
         /// </summary>
-        /// <param name="variableName"></param>
-        /// <param name="variableValue"></param>
+        /// <param name="variableName">name of variable.</param>
+        /// <param name="variableValue">value for variable.</param>
         public void SetVariable(string variableName, double variableValue)
         {
-            variables[variableName] = variableValue;
+            this.variables[variableName] = variableValue;
         }
 
         /// <summary>
@@ -44,7 +52,9 @@ namespace ExpressionTreeEngine
         /// <returns>The value of the expression.</returns>
         public double Evaluate()
         {
-            return root.Evaluate();
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            return this.root.Evaluate();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         /// <summary>
@@ -54,38 +64,38 @@ namespace ExpressionTreeEngine
         /// <returns>root node.</returns>
         private ExpressionTreeNode MakeExpressionTree(string expression)
         {
-            expression = ShuntingYardAlgorithm(expression);
-        
-
+            expression = this.ShuntingYardAlgorithm(expression);
             for (int i = 0; i < expression.Length; i++)
             {
                 if (!OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
                 {
-                    if (Char.IsDigit(expression[i]))
+                    if (char.IsDigit(expression[i]))
                     {
-                        sOutput.Push(new ExpressionTreeConstNode(Convert.ToDouble(expression[i].ToString())));
+                        this.sOutput.Push(new ExpressionTreeConstNode(Convert.ToDouble(expression[i].ToString())));
                     }
-                   
-                    
                 }
                 else
                 {
                     ExpressionTreeOperatorNode temp = OperatorNodeFactory.CreateOperatorNode(expression[i]);
 
-                    if (sOutput.Count != 0)
+                    if (this.sOutput.Count != 0)
                     {
-                        temp.Left = sOutput.Pop();
-                        temp.Right = sOutput.Pop();
+                        temp.Left = this.sOutput.Pop();
+                        temp.Right = this.sOutput.Pop();
                     }
 
-                    sOutput.Push(temp);
+                    this.sOutput.Push(temp);
+                }
+            }
 
-                }                
-            }            
-            return sOutput.Pop();
+            return this.sOutput.Pop();
         }
 
-
+        /// <summary>
+        /// puts expressions in postfix.
+        /// </summary>
+        /// <param name="expression">og expression.</param>
+        /// <returns>postfix expression.</returns>
         private string ShuntingYardAlgorithm(string expression)
         {
             Stack<char> operatorStack = new Stack<char>();
@@ -99,6 +109,7 @@ namespace ExpressionTreeEngine
                         output += operatorStack.Peek();
                         operatorStack.Pop();
                     }
+
                     operatorStack.Push(expression[i]);
                 }
                 else

@@ -15,24 +15,33 @@ namespace ExpressionTreeEngine.Nodes
     /// </summary>
     internal class ExpressionTreeConstNode : ExpressionTreeNode
     {
-        public ExpressionTreeConstNode(double eData) 
-        { 
-            this.data = eData;
-        }
         /// <summary>
         /// the data/ the operand.
         /// </summary>
         private double data;
 
         /// <summary>
-        /// Gets the operand / the value.
+        /// Initializes a new instance of the <see cref="ExpressionTreeConstNode"/> class.
+        /// </summary>
+        /// <param name="eData">input data.</param>
+        public ExpressionTreeConstNode(double eData)
+        {
+            this.data = eData;
+        }
+
+        /// <summary>
+        /// Gets or sets the operand / the value.
         /// </summary>
         public double Data
         {
-            get { return data; }
-            set { data = value; }
+            get { return this.data; }
+            set { this.data = value; }
         }
 
+        /// <summary>
+        /// evaluate for const nodes
+        /// </summary>
+        /// <returns>data of node.</returns>
         public override double Evaluate()
         {
             return this.data;

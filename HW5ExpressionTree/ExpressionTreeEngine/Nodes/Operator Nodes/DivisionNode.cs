@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="DivisionNode.cs" company="Skyllar Estil">
+// Copyright (c) Skyllar Estil. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,10 +26,14 @@ namespace ExpressionTreeEngine
             this.Left = null;
             this.Right = null;
         }
+
+        /// <summary>
+        /// finds the quotient.
+        /// </summary>
+        /// <returns>the quotient.</returns>
         public override double Evaluate()
         {
-            return Right.Evaluate() / Left.Evaluate();
+            return this.Right.Evaluate() / this.Left.Evaluate();
         }
-    
     }
 }

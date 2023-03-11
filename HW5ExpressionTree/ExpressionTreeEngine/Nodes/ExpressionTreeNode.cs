@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="ExpressionTreeNode.cs" company="Skyllar Estil">
+// Copyright (c) Skyllar Estil. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -12,9 +16,10 @@ namespace ExpressionTreeEngine.Nodes
     /// </summary>
     public abstract class ExpressionTreeNode
     {
-
-       
-
+        /// <summary>
+        /// abstract call of evaluate
+        /// </summary>
+        /// <returns>nothing.</returns>
         public abstract double Evaluate();
     }
 }

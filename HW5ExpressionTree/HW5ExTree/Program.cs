@@ -7,7 +7,10 @@ using System.ComponentModel.Design;
 using ExpressionTreeEngine;
 using ExpressionTreeEngine.Nodes;
 
-class Program
+/// <summary>
+/// houses the demo program.
+/// </summary>
+public class Program
 {
     /// <summary>
     /// demo class.
@@ -31,7 +34,8 @@ class Program
                 string curVName = Console.ReadLine();
                 Console.WriteLine("Enter varibale value");
                 double vValue = Convert.ToInt32(Console.ReadLine());
-                ExpressionTreeVariableNode vNode = new ExpressionTreeVariableNode(curVName, vValue);
+
+                // ExpressionTreeVariableNode vNode = new ExpressionTreeVariableNode(curVName, ref vValue)
             }
             else if (userInput == 3)
             {
@@ -43,7 +47,12 @@ class Program
         while (userInput != 4);
     }
 
-    public static int Menu(string expression)
+    /// <summary>
+    /// holds the menu options.
+    /// </summary>
+    /// <param name="expression">takes in the default expression/\.</param>
+    /// <returns>the user input.</returns>
+    private static int Menu(string expression)
     {
         Console.WriteLine("Menu (current expression) = " + expression);
         Console.WriteLine("1 = Set a new expression");

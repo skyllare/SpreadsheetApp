@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="AdditionNode.cs" company="Skyllar Estil">
+// Copyright (c) Skyllar Estil. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,15 +28,13 @@ namespace ExpressionTreeEngine
             this.Right = null;
         }
 
+        /// <summary>
+        /// adds the expression tree nodes.
+        /// </summary>
+        /// <returns>the sum.</returns>
         public override double Evaluate()
         {
-            return Left.Evaluate() + Right.Evaluate();
-            
+            return this.Left.Evaluate() + this.Right.Evaluate();
         }
-
     }
-
-
-
 }
-

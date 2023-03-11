@@ -1,9 +1,13 @@
-﻿using ExpressionTreeEngine.Nodes;
+﻿// <copyright file="OperatorNodeFactory.cs" company="Skyllar Estil">
+// Copyright (c) Skyllar Estil. All rights reserved.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ExpressionTreeEngine.Nodes;
 
 namespace ExpressionTreeEngine
 {
@@ -24,7 +28,11 @@ namespace ExpressionTreeEngine
         {
         }
 
-        //creates operator nodes.
+        /// <summary>
+        /// creates operator nodes.
+        /// </summary>
+        /// <param name="op">operator</param>
+        /// <returns>type of operator node.</returns>
         public static ExpressionTreeOperatorNode CreateOperatorNode(char op)
         {
             if (TypesOfOperators.Contains(op))
