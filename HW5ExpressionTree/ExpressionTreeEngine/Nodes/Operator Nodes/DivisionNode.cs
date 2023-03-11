@@ -17,19 +17,15 @@ namespace ExpressionTreeEngine
         /// </summary>
         /// <param name="left">left node.</param>
         /// <param name="right">right node.</param>
-        public DivisionNode(ExpressionTreeNode left, ExpressionTreeNode right)
-          : base(left, right)
+        public DivisionNode()
         {
+            this.Left = null;
+            this.Right = null;
         }
-
-        /// <summary>
-        /// divides the left and right nodes.
-        /// </summary>
-        protected override void PerformOperation()
+        public override double Evaluate()
         {
-            // Divide the values of the left and right operands
-            double result = ((ExpressionTreeConstNode)this.Left).Data / ((ExpressionTreeConstNode)this.Right).Data;
-            Console.WriteLine($"Result of addition: {result}");
+            return (this.Left.Data / this.Right.Data);
         }
+    
     }
 }

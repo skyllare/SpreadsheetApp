@@ -14,19 +14,16 @@ namespace ExpressionTreeEngine
         /// </summary>
         /// <param name="left">left node.</param>
         /// <param name="right">right node.</param>
-        public MultiplicationNode(ExpressionTreeNode left, ExpressionTreeNode right)
-        : base(left, right)
+        public MultiplicationNode()
         {
+            this.Left = null;
+            this.Right = null;
         }
 
-        /// <summary>
-        /// multiples the operands.
-        /// </summary>
-        protected override void PerformOperation()
+        public override double Evaluate()
         {
-            // Multiply the values of the left and right operands
-            double result = ((ExpressionTreeConstNode)this.Left).Data * ((ExpressionTreeConstNode)this.Right).Data;
-            Console.WriteLine($"Result of addition: {result}");
+            return (this.Left.Data * this.Right.Data);
         }
+    
     }
 }

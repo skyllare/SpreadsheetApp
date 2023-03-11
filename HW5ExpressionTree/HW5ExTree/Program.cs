@@ -2,13 +2,17 @@
 // Copyright (c) Skyllar Estil. All rights reserved.
 // </copyright>
 
-using ExpressionTreeEngine;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.Design;
+using ExpressionTreeEngine.Nodes;
+using ExpressionTreeEngine;
 
 class Program
 {
-    static void Main()
+    /// <summary>
+    /// demo class.
+    /// </summary>
+    private static void Main()
     {
         string expression = "A1+B1+C1";
         int userInput = 0;
@@ -31,6 +35,7 @@ class Program
             else if (userInput == 3)
             {
                 ExpressionTree test = new ExpressionTree(expression);
+                test.Evaluate();
             }
         }
         while (userInput != 4);

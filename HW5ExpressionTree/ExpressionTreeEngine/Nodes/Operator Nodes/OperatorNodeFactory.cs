@@ -31,19 +31,19 @@ namespace ExpressionTreeEngine
             {
                 if (op == '+')
                 {
-                    return new AdditionNode(null, null);
+                    return new AdditionNode();
                 }
                 else if (op == '-')
                 {
-                    return new SubtractionNode(null, null);
+                    return new SubtractionNode();
                 }
                 else if (op == '/')
                 {
-                    return new DivisionNode(null, null);
+                    return new DivisionNode();
                 }
                 else if (op == '*')
                 {
-                    return new MultiplicationNode(null, null);
+                    return new MultiplicationNode();
                 }
 
                // return new ExpressionTreeNode(op);

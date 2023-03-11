@@ -18,24 +18,20 @@ namespace ExpressionTreeEngine
         /// </summary>
         /// <param name="left"> expression node left.</param>
         /// <param name="right"> expression node right.</param>
-        public AdditionNode(ExpressionTreeNode left, ExpressionTreeNode right)
-            : base(left, right)
+        public AdditionNode()
         {
+            this.Left = null;
+            this.Right = null;
         }
 
-        protected void Evaluate()
+        public override double Evaluate()
         {
-            PerformOperation();
+            return 0;
         }
 
-        /// <summary>
-        /// adds the left and right node together.
-        /// </summary>
-        protected override void PerformOperation()
-        {
-            // Add the values of the left and right operands
-            double result = ((ExpressionTreeConstNode)this.Left).Data + ((ExpressionTreeConstNode)this.Right).Data;
-            Console.WriteLine($"Result of addition: {result}");
-        }
     }
+
+
+
 }
+

@@ -42,7 +42,7 @@ namespace ExpressionTreeEngine
         /// <returns>The value of the expression.</returns>
         public double Evaluate()
         {
-
+            return 0;
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace ExpressionTreeEngine
                 if (!OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
                 {
                     temp = new ExpressionTreeConstNode();
-                    temp.Data= expression[i];
+                    temp.Data = expression[i];
                     sTree.Push(temp);
                 }
                 else
@@ -75,7 +75,7 @@ namespace ExpressionTreeEngine
                     sTree.Push(temp);
 
                 }
-               
+
 
             }
 

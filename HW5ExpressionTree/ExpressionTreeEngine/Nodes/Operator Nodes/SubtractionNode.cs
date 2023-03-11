@@ -9,16 +9,17 @@ namespace ExpressionTreeEngine
 {
     internal class SubtractionNode : ExpressionTreeOperatorNode
     {
-        public SubtractionNode(ExpressionTreeNode left, ExpressionTreeNode right)
-      : base(left, right)
+        public SubtractionNode()
         {
+            Left = null;
+            Right = null;
         }
 
-        protected override void PerformOperation()
+
+        public override double Evaluate()
         {
-            // Subtract the values of the left and right operands
-            double result = ((ExpressionTreeConstNode)this.Left).Data - ((ExpressionTreeConstNode)this.Right).Data;
-            Console.WriteLine($"Result of addition: {result}");
+
+            return 0;
         }
 
     }

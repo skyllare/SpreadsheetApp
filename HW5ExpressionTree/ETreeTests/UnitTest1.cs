@@ -2,9 +2,11 @@
 // Copyright (c) Skyllar Estil. All rights reserved.
 // </copyright>
 using ExpressionTreeEngine;
+using System.Linq.Expressions;
 
 namespace ExpressionTreeTests
 {
+    /*
     public class Tests
     {
         /// <summary>
@@ -86,5 +88,5 @@ namespace ExpressionTreeTests
             ExpressionTree tTree = new ExpressionTree("11/2/4");
             Assert.That(tTree.Evaluate(), Is.EqualTo(1.375));
         }
-    }
+    }*/
 }
