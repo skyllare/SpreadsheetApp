@@ -19,8 +19,6 @@ namespace ExpressionTreeEngine
         /// <summary>
         /// Initializes a new instance of the <see cref="MultiplicationNode"/> class.
         /// </summary>
-        /// <param name="left">left node.</param>
-        /// <param name="right">right node.</param>
         public MultiplicationNode()
         {
             this.Left = null;

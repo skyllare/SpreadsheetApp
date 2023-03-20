@@ -17,6 +17,13 @@ namespace ExpressionTreeEngine.Nodes
     internal abstract class ExpressionTreeOperatorNode : ExpressionTreeNode
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ExpressionTreeOperatorNode"/> class.
+        /// </summary>
+        public ExpressionTreeOperatorNode()
+        {
+        }
+
+        /// <summary>
         /// Gets or sets the Left node.
         /// </summary>
         public ExpressionTreeNode Left { get; set; }
@@ -27,16 +34,9 @@ namespace ExpressionTreeEngine.Nodes
         public ExpressionTreeNode Right { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExpressionTreeOperatorNode"/> class.
+        /// Evaluate method.
         /// </summary>
-        public ExpressionTreeOperatorNode()
-        {
-        }
-
-        /// <summary>
-        /// not implemented evalucate function.
-        /// </summary>
-        /// <returns>0.0./returns>
+        /// <returns> zero.</returns>
         public override double Evaluate()
         {
             return 0.0;

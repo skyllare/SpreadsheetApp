@@ -31,7 +31,7 @@ namespace ExpressionTreeEngine
         /// <returns>te difference of two nodes.</returns>
         public override double Evaluate()
         {
-            return this.Right.Evaluate() - this.Left.Evaluate();
+            return this.Left.Evaluate() - this.Right.Evaluate();
         }
     }
 }

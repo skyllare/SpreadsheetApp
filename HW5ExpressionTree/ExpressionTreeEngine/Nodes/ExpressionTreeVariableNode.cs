@@ -46,6 +46,15 @@ namespace ExpressionTreeEngine.Nodes
         }
 
         /// <summary>
+        /// Gets or sets the variable dictionary.
+        /// </summary>
+        public Dictionary<string, double> VValue
+        {
+            get { return this.vValue; }
+            set { this.vValue = value; }
+        }
+
+        /// <summary>
         /// evaluation for varibale nodes.
         /// </summary>
         /// <returns>the value of the variable.</returns>

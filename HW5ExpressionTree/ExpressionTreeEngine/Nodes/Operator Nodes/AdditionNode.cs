@@ -20,8 +20,6 @@ namespace ExpressionTreeEngine
         /// <summary>
         /// Initializes a new instance of the <see cref="AdditionNode"/> class.
         /// </summary>
-        /// <param name="left"> expression node left.</param>
-        /// <param name="right"> expression node right.</param>
         public AdditionNode()
         {
             this.Left = null;

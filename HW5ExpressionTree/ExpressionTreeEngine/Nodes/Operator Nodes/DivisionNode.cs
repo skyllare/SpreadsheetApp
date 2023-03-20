@@ -19,8 +19,6 @@ namespace ExpressionTreeEngine
         /// <summary>
         /// Initializes a new instance of the <see cref="DivisionNode"/> class.
         /// </summary>
-        /// <param name="left">left node.</param>
-        /// <param name="right">right node.</param>
         public DivisionNode()
         {
             this.Left = null;
@@ -33,7 +31,7 @@ namespace ExpressionTreeEngine
         /// <returns>the quotient.</returns>
         public override double Evaluate()
         {
-            return this.Right.Evaluate() / this.Left.Evaluate();
+            return this.Left.Evaluate() / this.Right.Evaluate();
         }
     }
 }

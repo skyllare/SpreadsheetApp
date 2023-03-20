@@ -19,6 +19,9 @@ public class Program
     {
         string expression = "A1+B1+C1";
         int userInput = 0;
+        Dictionary<string, double> variables = new();
+       
+
         do
         {
             userInput = 0;
@@ -34,12 +37,12 @@ public class Program
                 string curVName = Console.ReadLine();
                 Console.WriteLine("Enter varibale value");
                 double vValue = Convert.ToInt32(Console.ReadLine());
-
-                // ExpressionTreeVariableNode vNode = new ExpressionTreeVariableNode(curVName, ref vValue)
+                variables[curVName] = vValue;
             }
             else if (userInput == 3)
             {
-                ExpressionTree test = new ExpressionTree(expression);
+                ExpressionTree test = new ExpressionTree(expression, variables);
+                test.MakeExpressionTree(expression);
                 double evaluation = test.Evaluate();
                 Console.WriteLine(evaluation);
             }

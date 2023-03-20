@@ -19,7 +19,7 @@ namespace ExpressionTreeEngine
         /// <summary>
         /// list of accepted operators.
         /// </summary>
-        public static List<char> TypesOfOperators = new List<char> { '+', '-', '/', '*' };
+        public static List<string> TypesOfOperators = new List<string> { "+", "-", "/", "*" };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OperatorNodeFactory"/> class.
@@ -31,11 +31,11 @@ namespace ExpressionTreeEngine
         /// <summary>
         /// creates operator nodes.
         /// </summary>
-        /// <param name="op">operator</param>
+        /// <param name="op">operator.</param>
         /// <returns>type of operator node.</returns>
         public static ExpressionTreeOperatorNode CreateOperatorNode(char op)
         {
-            if (TypesOfOperators.Contains(op))
+            if (TypesOfOperators.Contains(op.ToString()))
             {
                 if (op == '+')
                 {

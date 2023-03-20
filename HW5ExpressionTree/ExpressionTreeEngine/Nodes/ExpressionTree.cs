@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Linq;
 using ExpressionTreeEngine.Nodes;
 
 namespace ExpressionTreeEngine
@@ -31,8 +32,9 @@ namespace ExpressionTreeEngine
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
         /// </summary>
         /// <param name="expression">Expression tree is made for.</param>
-        public ExpressionTree(string expression)
+        public ExpressionTree(string expression, Dictionary<string,double> vars)
         {
+            this.variables = vars;
             this.root = this.MakeExpressionTree(expression);
         }
 
@@ -52,9 +54,7 @@ namespace ExpressionTreeEngine
         /// <returns>The value of the expression.</returns>
         public double Evaluate()
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             return this.root.Evaluate();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         /// <summary>
@@ -62,26 +62,33 @@ namespace ExpressionTreeEngine
         /// </summary>
         /// <param name="expression">Expression that the tree is made after.</param>
         /// <returns>root node.</returns>
-        private ExpressionTreeNode MakeExpressionTree(string expression)
+        public ExpressionTreeNode MakeExpressionTree(string expression)
         {
-            expression = this.ShuntingYardAlgorithm(expression);
-            for (int i = 0; i < expression.Length; i++)
+            List<string> sExpression = this.ShuntingYardAlgorithm(expression);
+            for (int i = 0; i < sExpression.Count; i++)
             {
-                if (!OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
+                if (!OperatorNodeFactory.TypesOfOperators.Contains(sExpression[i]))
                 {
-                    if (char.IsDigit(expression[i]))
+                    double tempValue = 0;
+                    bool result = double.TryParse(sExpression[i], out tempValue);
+                    if (result)
                     {
-                        this.sOutput.Push(new ExpressionTreeConstNode(Convert.ToDouble(expression[i].ToString())));
+                        this.sOutput.Push(new ExpressionTreeConstNode(Convert.ToDouble(sExpression[i].ToString())));
+                    }
+                    else
+                    {
+                        ExpressionTreeVariableNode varNodeTemp = new ExpressionTreeVariableNode(sExpression[i], ref variables);
+                        this.sOutput.Push(new ExpressionTreeConstNode(Convert.ToDouble(varNodeTemp.Evaluate().ToString())));
                     }
                 }
                 else
                 {
-                    ExpressionTreeOperatorNode temp = OperatorNodeFactory.CreateOperatorNode(expression[i]);
+                    ExpressionTreeOperatorNode temp = OperatorNodeFactory.CreateOperatorNode(Convert.ToChar(sExpression[i]));
 
                     if (this.sOutput.Count != 0)
                     {
-                        temp.Left = this.sOutput.Pop();
                         temp.Right = this.sOutput.Pop();
+                        temp.Left = this.sOutput.Pop();
                     }
 
                     this.sOutput.Push(temp);
@@ -96,35 +103,52 @@ namespace ExpressionTreeEngine
         /// </summary>
         /// <param name="expression">og expression.</param>
         /// <returns>postfix expression.</returns>
-        private string ShuntingYardAlgorithm(string expression)
+        private List<string> ShuntingYardAlgorithm(string expression)
         {
-            Stack<char> operatorStack = new Stack<char>();
+            Stack<string> operatorStack = new Stack<string>();
+            List<string> operatorString = new List<string>();
             string output = string.Empty;
+            string var = string.Empty;
+            string value = string.Empty;
+
             for (int i = 0; i < expression.Length; i++)
             {
-                if (OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
+                if (OperatorNodeFactory.TypesOfOperators.Contains(expression[i].ToString()))
                 {
-                    if (operatorStack.Count != 0)
+                    operatorString.Add(value);
+                    value = string.Empty;
+                    var = string.Empty;
+                    var += expression[i];
+                    if (operatorStack.Count() == 0)
                     {
-                        output += operatorStack.Peek();
-                        operatorStack.Pop();
+                        operatorStack.Push(var);
                     }
-
-                    operatorStack.Push(expression[i]);
+                    else
+                    {
+                        operatorString.Add(operatorStack.Pop());
+                        operatorStack.Push(var);
+                    }
                 }
-                else
+                else if (char.IsDigit(expression[i]) || expression[i] == '.' || char.IsLetter(expression[i]))
                 {
-                    output += expression[i];
+                    if (i != expression.Length - 1)
+                    {
+                        value += expression[i];
+                    }
+                    else
+                    {
+                        value += expression[i].ToString();
+                        operatorString.Add(value);
+                    }
                 }
             }
 
-            for (int i = 0; i <= operatorStack.Count; i++)
+            if (operatorStack.Count() != 0)
             {
-                output += operatorStack.Peek();
-                operatorStack.Pop();
+                operatorString.Add(operatorStack.Pop());
             }
 
-            return output;
+            return operatorString;
         }
     }
 }
