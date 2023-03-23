@@ -26,6 +26,17 @@ namespace ExpressionTreeEngine
         }
 
         /// <summary>
+        /// returns the precendence of the division operator.
+        /// </summary>
+        /// <param name="op">operator.</param>
+        /// <returns>int 1.</returns>
+        public override int OperatorPrecedence(string op)
+        {
+            return 2;
+        }
+
+
+        /// <summary>
         /// finds the quotient.
         /// </summary>
         /// <returns>the quotient.</returns>

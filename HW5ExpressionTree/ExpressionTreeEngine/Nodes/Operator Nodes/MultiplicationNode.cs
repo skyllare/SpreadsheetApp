@@ -26,6 +26,16 @@ namespace ExpressionTreeEngine
         }
 
         /// <summary>
+        /// returns the precendence of the multiplication operator.
+        /// </summary>
+        /// <param name="op">operator.</param>
+        /// <returns>int 2.</returns>
+        public override int OperatorPrecedence(string op)
+        {
+            return 2;
+        }
+
+        /// <summary>
         /// find the product of nodes.
         /// </summary>
         /// <returns>the product.</returns>

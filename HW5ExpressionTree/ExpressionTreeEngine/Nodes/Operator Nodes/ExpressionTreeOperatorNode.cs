@@ -34,6 +34,13 @@ namespace ExpressionTreeEngine.Nodes
         public ExpressionTreeNode Right { get; set; }
 
         /// <summary>
+        /// abstract class for operator precedence.
+        /// </summary>
+        /// <param name="op">operator.</param>
+        /// <returns>precedence.</returns>
+        public abstract int OperatorPrecedence(string op);
+
+        /// <summary>
         /// Evaluate method.
         /// </summary>
         /// <returns> zero.</returns>
