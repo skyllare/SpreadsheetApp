@@ -115,6 +115,7 @@ namespace ExpressionTreeEngine
             {
                 if (OperatorNodeFactory.TypesOfOperators.Contains(expression[i].ToString()))
                 {
+                    //note: make changes in here
                     operatorString.Add(value);
                     value = string.Empty;
                     var = string.Empty;
@@ -149,6 +150,25 @@ namespace ExpressionTreeEngine
             }
 
             return operatorString;
+        }
+
+        /// <summary>
+        /// returns the operator precedence.
+        /// </summary>
+        /// <param name="op">operator.</param>
+        /// <returns>1 for +/- or 2 for //*.</returns>
+        private int OperatorPrecedence (string op)
+        {
+            if (op == "*" || op == "/")
+            {
+                return 2;
+            }
+            else if (op == "+" || op == "-")
+            {
+                return 1;
+            }
+
+            return -1;
         }
     }
 }

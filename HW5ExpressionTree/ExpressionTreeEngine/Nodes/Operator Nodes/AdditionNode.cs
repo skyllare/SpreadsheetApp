@@ -27,16 +27,6 @@ namespace ExpressionTreeEngine
         }
 
         /// <summary>
-        /// returns the precendence of the addition operator.
-        /// </summary>
-        /// <param name="op">operator.</param>
-        /// <returns>int 1.</returns>
-        public override int OperatorPrecedence(string op)
-        {
-            return 1;
-        }
-
-        /// <summary>
         /// adds the expression tree nodes.
         /// </summary>
         /// <returns>the sum.</returns>
