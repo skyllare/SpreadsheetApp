@@ -33,6 +33,8 @@ namespace ExpressionTreeEngine.Nodes
         /// </summary>
         public ExpressionTreeNode Right { get; set; }
 
+   
+
         /// <summary>
         /// Evaluate method.
         /// </summary>

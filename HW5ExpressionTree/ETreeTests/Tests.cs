@@ -17,157 +17,40 @@ namespace ExpressionTreeTests
         private readonly Dictionary<string, double> variables = new ();
 
         /// <summary>
-        /// tests an expression that it just addition.
+        /// base dictionary for variables.
         /// </summary>
-        [Test]
-        public void TestBasicAddition()
-        {
-            ExpressionTree tTree = new ExpressionTree("2+2+5", this.variables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(9));
-        }
-
-        /// <summary>
-        /// tests an expression that it just subtraction.
-        /// </summary>
-        [Test]
-        public void TestBasicSubtraction()
-        {
-            ExpressionTree tTree = new ExpressionTree("10-1-2", this.variables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(7));
-        }
-
-        /// <summary>
-        /// tests an expression that it just multiplication.
-        /// </summary>
-        [Test]
-        public void TestBasicMultiplication()
-        {
-            ExpressionTree tTree = new ExpressionTree("3*4*1", this.variables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(12));
-        }
-
-        /// <summary>
-        /// tests an expression that it just division.
-        /// </summary>
-        [Test]
-        public void TestBasicDivision()
-        {
-            ExpressionTree tTree = new ExpressionTree("12/6", this.variables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(2));
-        }
-
-        /// <summary>
-        /// tests an expression that it just addition.
-        /// </summary>
-        [Test]
-        public void TestDecimalAddition()
-        {
-            ExpressionTree tTree = new ExpressionTree("3.4+6.7+4.8", this.variables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(14.9).Within(0.00001));
-        }
-
-        /// <summary>
-        /// tests an expression that it just subtraction.
-        /// </summary>
-        [Test]
-        public void TestDecimalSubtraction()
-        {
-            ExpressionTree tTree = new ExpressionTree("10.2-2.5-1.8", this.variables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(5.9).Within(0.00001));
-        }
-
-        /// <summary>
-        /// tests an expression that it just multiplication.
-        /// </summary>
-        [Test]
-        public void TestDecimalMultiplication()
-        {
-            ExpressionTree tTree = new ExpressionTree("3.7*2.4*1.2", this.variables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(10.656));
-        }
-
-        /// <summary>
-        /// tests an expression that it just division.
-        /// </summary>
-        [Test]
-        public void TestDecimalDivision()
-        {
-            ExpressionTree tTree = new ExpressionTree("11/2/4", this.variables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(1.375));
-        }
-
-        /// <summary>
-        /// Tests that when variables have no value, return is 0.
-        /// </summary>
-        [Test]
-        public void TestVariableBaseCase()
-        {
-            ExpressionTree tTree = new ExpressionTree("A1+B1+C2", this.variables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(0));
-        }
-
-        /// <summary>
-        /// tests addition using variables.
-        /// </summary>
-        [Test]
-        public void TestVariableAddition()
-        {
-            Dictionary<string, double> vVariables = new Dictionary<string, double>()
-            {
-                { "A1", 3.0 },
-                { "B1", 3.0 },
-            };
-
-            ExpressionTree tTree = new ExpressionTree("A1+B1", vVariables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(6.0));
-        }
-
-        /// <summary>
-        /// tests subtraction using variables.
-        /// </summary>
-        [Test]
-        public void TestVariableSutraction()
-        {
-            Dictionary<string, double> vVariables = new Dictionary<string, double>()
+        private readonly Dictionary<string, double> vVariables = new Dictionary<string, double>()
             {
                 { "A1", 6.0 },
                 { "B1", 3.0 },
             };
 
-            ExpressionTree tTree = new ExpressionTree("A1-B1", vVariables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(3.0));
-        }
-
         /// <summary>
-        /// tests multiplication using variables.
+        /// tests all operations.
         /// </summary>
-        [Test]
-        public void TestVariableMultiplicationtion()
+        /// <param name="n">experssion.</param>
+        /// <param name="m">expected result.</param>
+        [TestCase("3.7*2.4*1.2", 10.656)]
+        [TestCase("10.2-2.5-1.8", 5.9)]
+        [TestCase("3.4+6.7+4.8", 14.9)]
+        [TestCase("3*4*1", 12)]
+        [TestCase("10-1-2", 7)]
+        [TestCase("2+2+5", 9)]
+        [TestCase("12/2/4", 1.5)]
+        [TestCase("12/6/1", 2)]
+        [TestCase("4+4*2/(1-5)", 2)]
+        [TestCase("4/(8-6)*(7*3)", 42)]
+        [TestCase("8*2/4", 4)]
+        [TestCase("(A1+B1)/B1", 3)]
+        [TestCase("A1/B1", 2.0)]
+        [TestCase("A1*B1", 18.0)]
+        [TestCase("A1-B1", 3.0)]
+        [TestCase("A1+B1", 9.0)]
+        [TestCase("X+Y+Z", 0.0)]
+        public void TestVariableDivision(string n, double m)
         {
-            Dictionary<string, double> vVariables = new Dictionary<string, double>()
-            {
-                { "A1", 6.0 },
-                { "B1", 3.0 },
-            };
-
-            ExpressionTree tTree = new ExpressionTree("A1*B1", vVariables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(18.0));
-        }
-
-        /// <summary>
-        /// tests division using variables.
-        /// </summary>
-        [Test]
-        public void TestVariableDivision()
-        {
-            Dictionary<string, double> vVariables = new Dictionary<string, double>()
-            {
-                { "A1", 6.0 },
-                { "B1", 3.0 },
-            };
-
-            ExpressionTree tTree = new ExpressionTree("A1/B1", vVariables);
-            Assert.That(tTree.Evaluate(), Is.EqualTo(2.0));
+            ExpressionTree tTree = new ExpressionTree(n, this.vVariables);
+            Assert.That(tTree.Evaluate(), Is.EqualTo(m).Within(0.00001));
         }
     }
 }

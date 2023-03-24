@@ -32,7 +32,8 @@ namespace ExpressionTreeEngine
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
         /// </summary>
         /// <param name="expression">Expression tree is made for.</param>
-        public ExpressionTree(string expression, Dictionary<string,double> vars)
+        /// <param name="vars">variable dictionary.</param>
+        public ExpressionTree(string expression, Dictionary<string, double> vars)
         {
             this.variables = vars;
             this.root = this.MakeExpressionTree(expression);
@@ -49,7 +50,7 @@ namespace ExpressionTreeEngine
         }
 
         /// <summary>
-        /// evaluates the expression to a double value
+        /// evaluates the expression to a double value.
         /// </summary>
         /// <returns>The value of the expression.</returns>
         public double Evaluate()
@@ -77,7 +78,7 @@ namespace ExpressionTreeEngine
                     }
                     else
                     {
-                        ExpressionTreeVariableNode varNodeTemp = new ExpressionTreeVariableNode(sExpression[i], ref variables);
+                        ExpressionTreeVariableNode varNodeTemp = new ExpressionTreeVariableNode(sExpression[i], ref this.variables);
                         this.sOutput.Push(new ExpressionTreeConstNode(Convert.ToDouble(varNodeTemp.Evaluate().ToString())));
                     }
                 }
@@ -115,18 +116,35 @@ namespace ExpressionTreeEngine
             {
                 if (OperatorNodeFactory.TypesOfOperators.Contains(expression[i].ToString()))
                 {
+                    // note: make changes in here
                     operatorString.Add(value);
                     value = string.Empty;
                     var = string.Empty;
                     var += expression[i];
-                    if (operatorStack.Count() == 0)
+                    if (operatorStack.Count() == 0 || var == "(")
                     {
                         operatorStack.Push(var);
                     }
+                    else if (var == ")")
+                    {
+                        while (operatorStack.Peek() != "(")
+                        {
+                            operatorString.Add(operatorStack.Pop());
+                        }
+
+                        operatorStack.Pop();
+                    }
                     else
                     {
-                        operatorString.Add(operatorStack.Pop());
-                        operatorStack.Push(var);
+                        if (this.OperatorPrecedence(var) <= this.OperatorPrecedence(operatorStack.Peek()))
+                        {
+                            operatorString.Add(operatorStack.Pop());
+                            operatorStack.Push(var);
+                        }
+                        else
+                        {
+                            operatorStack.Push(var);
+                        }
                     }
                 }
                 else if (char.IsDigit(expression[i]) || expression[i] == '.' || char.IsLetter(expression[i]))
@@ -143,12 +161,32 @@ namespace ExpressionTreeEngine
                 }
             }
 
-            if (operatorStack.Count() != 0)
+            while (operatorStack.Count() != 0)
             {
                 operatorString.Add(operatorStack.Pop());
             }
 
+            operatorString.RemoveAll(string.IsNullOrEmpty);
             return operatorString;
+        }
+
+        /// <summary>
+        /// returns the operator precedence.
+        /// </summary>
+        /// <param name="op">operator.</param>
+        /// <returns>1 for +/- or 2 for //*.</returns>
+        private int OperatorPrecedence(string op)
+        {
+            if (op == "*" || op == "/")
+            {
+                return 2;
+            }
+            else if (op == "+" || op == "-")
+            {
+                return 1;
+            }
+
+            return -1;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace ExpressionTreeEngine
         /// <summary>
         /// list of accepted operators.
         /// </summary>
-        public static List<string> TypesOfOperators = new List<string> { "+", "-", "/", "*" };
+        public static List<string> TypesOfOperators = new List<string> { "+", "-", "/", "*", ")", "(" };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OperatorNodeFactory"/> class.

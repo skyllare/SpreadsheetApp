@@ -19,8 +19,7 @@ public class Program
     {
         string expression = "A1+B1+C1";
         int userInput = 0;
-        Dictionary<string, double> variables = new();
-       
+        Dictionary<string, double> variables = new ();
 
         do
         {
