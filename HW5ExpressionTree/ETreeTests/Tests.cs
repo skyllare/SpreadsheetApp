@@ -16,6 +16,9 @@ namespace ExpressionTreeTests
         /// </summary>
         private readonly Dictionary<string, double> variables = new ();
 
+        /// <summary>
+        /// base dictionary for variables.
+        /// </summary>
         private readonly Dictionary<string, double> vVariables = new Dictionary<string, double>()
             {
                 { "A1", 6.0 },
