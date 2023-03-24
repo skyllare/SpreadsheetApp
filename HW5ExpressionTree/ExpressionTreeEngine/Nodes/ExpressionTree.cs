@@ -115,19 +115,35 @@ namespace ExpressionTreeEngine
             {
                 if (OperatorNodeFactory.TypesOfOperators.Contains(expression[i].ToString()))
                 {
-                    //note: make changes in here
+                    // note: make changes in here
                     operatorString.Add(value);
                     value = string.Empty;
                     var = string.Empty;
                     var += expression[i];
-                    if (operatorStack.Count() == 0)
+                    if (operatorStack.Count() == 0 || var == "(")
                     {
                         operatorStack.Push(var);
                     }
+                    else if (var == ")")
+                    {
+                        while (operatorStack.Peek() != "(")
+                        {
+                            operatorString.Add(operatorStack.Pop());
+                        }
+
+                        operatorStack.Pop();
+                    }
                     else
                     {
-                        operatorString.Add(operatorStack.Pop());
-                        operatorStack.Push(var);
+                        if (this.OperatorPrecedence(var) <= this.OperatorPrecedence(operatorStack.Peek()))
+                        {
+                            operatorString.Add(operatorStack.Pop());
+                            operatorStack.Push(var);
+                        }
+                        else
+                        {
+                            operatorStack.Push(var);
+                        }
                     }
                 }
                 else if (char.IsDigit(expression[i]) || expression[i] == '.' || char.IsLetter(expression[i]))
@@ -144,11 +160,11 @@ namespace ExpressionTreeEngine
                 }
             }
 
-            if (operatorStack.Count() != 0)
+            while (operatorStack.Count() != 0)
             {
                 operatorString.Add(operatorStack.Pop());
             }
-
+            operatorString.RemoveAll(string.IsNullOrEmpty);
             return operatorString;
         }
 
