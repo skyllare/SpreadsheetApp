@@ -38,6 +38,7 @@ namespace ExpressionTreeTests
         [TestCase("4+4*2/(1-5)", 2)]
         [TestCase("4/(8-6)*(7*3)", 42)]
         [TestCase("8*2/4", 4)]
+        [TestCase("(A1+B1)/B1", 3)]
         [TestCase("A1/B1", 2.0)]
         [TestCase("A1*B1", 18.0)]
         [TestCase("A1-B1", 3.0)]
