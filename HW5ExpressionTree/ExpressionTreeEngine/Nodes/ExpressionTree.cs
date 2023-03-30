@@ -84,7 +84,8 @@ namespace ExpressionTreeEngine
                 }
                 else
                 {
-                    ExpressionTreeOperatorNode temp = OperatorNodeFactory.CreateOperatorNode(Convert.ToChar(sExpression[i]));
+                    OperatorNodeFactory factory = new OperatorNodeFactory();
+                    ExpressionTreeOperatorNode temp = factory.CreateOperatorNode(Convert.ToChar(sExpression[i]));
 
                     if (this.sOutput.Count != 0)
                     {
