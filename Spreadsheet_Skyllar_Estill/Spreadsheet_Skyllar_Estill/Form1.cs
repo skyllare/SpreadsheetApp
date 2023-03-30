@@ -28,28 +28,8 @@ namespace Spreadsheet_Skyllar_Estill
             this.InitializeComponent();
             this.spreadsheet = new Spreadsheet(50, 26);
             this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
+           // this.spreadsheet.CellPropertyChanged += this.dataGridView1_CellEndEdit;
             this.InitializeDataGrid();
-        }
-
-        /// <summary>
-        /// Event handler when the cell property changes.
-        /// </summary>
-        /// <param name="sender">The cell being modified.</param>
-        /// <param name="e">The property being modified.</param>
-        private void OnCellPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            Cell curCell = sender as Cell;
-
-            if (curCell != null)
-            {
-                int row = curCell.RowIndex;
-                int col = curCell.ColumnIndex;
-
-                if (e.PropertyName == "CellText")
-                {
-                    this.dataGridView1.Rows[row].Cells[col].Value = curCell.CellValue;
-                }
-            }
         }
 
         /// <summary>
@@ -115,5 +95,64 @@ namespace Spreadsheet_Skyllar_Estill
                 }
             }
         }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            string msg = String.Format("Editing Cell at ({0}, {1})",e.ColumnIndex + 1, e.RowIndex + 1);
+            this.Text = msg;
+            /*int row = e.RowIndex; int col = e.ColumnIndex;
+            Cell selectedCell = this.spreadsheet.GetCell(row, col + 1);
+            this.dataGridView1.Rows[row].Cells[col].Value = selectedCell.CellText;*/
+        }
+
+        private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            string msg = String.Format("Finished Editing Cell at ({0}, {1})", e.ColumnIndex + 1, e.RowIndex + 1);
+            this.Text = msg;
+            string text;
+            int row = e.RowIndex, col = e.ColumnIndex;
+            Cell editedCell = this.spreadsheet.GetCell(row, col);
+
+            if (this.dataGridView1.Rows[row].Cells[col].Value != null)
+            {
+                text = this.dataGridView1.Rows[row].Cells[col].Value.ToString();
+            }
+            else
+            {
+                text = string.Empty;
+            }
+
+            editedCell.CellText = text;
+            this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
+
+        }
+
+        /// <summary>
+        /// Event handler when the cell property changes.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
+        private void OnCellPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            Cell curCell = sender as Cell;
+
+            if (curCell != null)
+            {
+                int row = curCell.RowIndex;
+                int col = curCell.ColumnIndex;
+
+                if (e.PropertyName == "CellText")
+                {
+                    this.dataGridView1.Rows[row].Cells[col].Value = curCell.CellValue;
+                }
+            }
+
+        }
+
     }
 }

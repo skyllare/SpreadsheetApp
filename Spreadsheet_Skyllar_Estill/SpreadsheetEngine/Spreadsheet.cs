@@ -59,6 +59,8 @@ namespace SpreadsheetEngine
         /// </summary>
         public event PropertyChangedEventHandler? CellPropertyChanged = delegate { };
 
+        
+
         /// <summary>
         /// Gets or sets the columnCount.
         /// </summary>
@@ -111,7 +113,7 @@ namespace SpreadsheetEngine
 
                         int column = (int)columnLetter - 65;
                         string sRow = curCell.CellText.Substring(2);
-                        int row = int.Parse(sRow);
+                        int row = int.Parse(sRow) - 1;
 
                         curCell.CellValue = this.cells[row, column].CellValue;
                     }
@@ -121,6 +123,7 @@ namespace SpreadsheetEngine
                     }
                 }
             }
+            this.CellPropertyChanged?.Invoke(sender, e);
 
             if (this.CellPropertyChanged != null)
             {
