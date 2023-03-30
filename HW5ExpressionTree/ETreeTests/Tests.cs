@@ -2,6 +2,7 @@
 // Copyright (c) Skyllar Estil. All rights reserved.
 // </copyright>
 using System.Linq.Expressions;
+using System.Reflection;
 using ExpressionTreeEngine;
 
 namespace ExpressionTreeTests
