@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -114,7 +115,6 @@ namespace SpreadsheetEngine
                 {
                     if (curCell.CellText[0] == '=')
                     {
-                        
                         bool testBool = this.isFormula(curCell.CellText);
 
                         if (testBool)
@@ -140,12 +140,16 @@ namespace SpreadsheetEngine
                     }
                 }
             }
+
             this.CellPropertyChanged?.Invoke(sender, e);
 
             if (this.CellPropertyChanged != null)
             {
                 this.CellPropertyChanged(sender, e);
             }
+            //set dictionary values to the cell values
+            string key = (Convert.ToChar(curCell.ColumnIndex +65)).ToString() + (curCell.RowIndex + 1).ToString();
+            this.variables[key] = Double.Parse(curCell.CellValue);
         }
 
         public bool isFormula(string expression)
