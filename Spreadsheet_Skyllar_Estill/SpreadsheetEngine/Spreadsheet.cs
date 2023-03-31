@@ -7,8 +7,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using ExpressionTreeEngine;
+using static SpreadsheetEngine.Spreadsheet;
 
 namespace SpreadsheetEngine
 {
@@ -17,6 +20,7 @@ namespace SpreadsheetEngine
     /// </summary>
     public class Spreadsheet
     {
+        Dictionary<string, double> variables = new();
         /// <summary>
         /// Uses MyCell to create a 2d array.
         /// </summary>
@@ -31,6 +35,7 @@ namespace SpreadsheetEngine
         /// Member value for column.
         /// </summary>
         private int columnCount;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
@@ -109,13 +114,25 @@ namespace SpreadsheetEngine
                 {
                     if (curCell.CellText[0] == '=')
                     {
-                        char columnLetter = curCell.CellText[1];
+                        
+                        bool testBool = this.isFormula(curCell.CellText);
 
-                        int column = (int)columnLetter - 65;
-                        string sRow = curCell.CellText.Substring(2);
-                        int row = int.Parse(sRow) - 1;
-
-                        curCell.CellValue = this.cells[row, column].CellValue;
+                        if (testBool)
+                        {
+                            string equation = curCell.CellText.Substring(1);
+                            ExpressionTree test = new ExpressionTree(equation, variables);
+                            test.MakeExpressionTree(equation);
+                            double evaluation = test.Evaluate();
+                            curCell.CellValue = evaluation.ToString();
+                        }
+                        else
+                        {
+                            char columnLetter = curCell.CellText[1];
+                            int column = (int)columnLetter - 65;
+                            string sRow = curCell.CellText.Substring(2);
+                            int row = int.Parse(sRow) - 1;
+                            curCell.CellValue = this.cells[row, column].CellValue;
+                        }
                     }
                     else
                     {
@@ -129,6 +146,19 @@ namespace SpreadsheetEngine
             {
                 this.CellPropertyChanged(sender, e);
             }
+        }
+
+        public bool isFormula(string expression)
+        {
+            List<string> operatorList = new List<string> { "+", "-", "/", "*", ")", "(" };
+            bool containsString = operatorList.Any(s => expression.Contains(s));
+
+            if (containsString)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -155,5 +185,6 @@ namespace SpreadsheetEngine
                 set { this.cellValue = value; }
             }
         }
+
     }
 }

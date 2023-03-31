@@ -27,4 +27,10 @@
     <PackageReference Include="System.Reflection" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="ExpressionTreeEngine">
+      <HintPath>..\..\HW5ExpressionTree\ExpressionTreeEngine\bin\Debug\net6.0\ExpressionTreeEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
