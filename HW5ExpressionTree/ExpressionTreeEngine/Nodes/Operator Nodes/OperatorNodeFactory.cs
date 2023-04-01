@@ -14,7 +14,7 @@ namespace ExpressionTreeEngine
 {
     /// <summary>
     /// builds operator nodes.
-    /// </summary>
+    /// </summary>TypesOfOperators
     internal class OperatorNodeFactory
     {
         /// <summary>
@@ -83,38 +83,5 @@ namespace ExpressionTreeEngine
             }
             throw new Exception("Unhandled operator");
         }
-
-        /*
-                /// <summary>
-                /// creates operator nodes.
-                /// </summary>
-                /// <param name="op">operator.</param>
-                /// <returns>type of operator node.</returns>
-                public static ExpressionTreeOperatorNode CreateOperatorNode(char op)
-                {
-                    if (TypesOfOperators.Contains(op.ToString()))
-                    {
-                        if (op == '+')
-                        {
-                            return new AdditionNode();
-                        }
-                        else if (op == '-')
-                        {
-                            return new SubtractionNode();
-                        }
-                        else if (op == '/')
-                        {
-                            return new DivisionNode();
-                        }
-                        else if (op == '*')
-                        {
-                            return new MultiplicationNode();
-                        }
-
-                       // return new ExpressionTreeNode(op);
-                    }
-
-                    return null;
-                }*/
     }
 }
