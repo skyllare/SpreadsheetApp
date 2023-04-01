@@ -4,11 +4,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using ExpressionTreeEngine;
+using static SpreadsheetEngine.Spreadsheet;
 
 namespace SpreadsheetEngine
 {
@@ -17,6 +22,29 @@ namespace SpreadsheetEngine
     /// </summary>
     public class Spreadsheet
     {
+        /// <summary>
+        /// values of the cells.
+        /// </summary>
+        private Dictionary<string, double> variables = new ();
+
+        /// <summary>
+        /// dictionary of cells that are referenced by other cells.
+        /// </summary>
+        private Dictionary<string, List<string>> referencedCells = new ();
+
+        /// <summary>
+        /// list of supported operators.
+        /// </summary>
+        private List<string> operatorList = new List<string> { "+", "-", "/", "*" };
+
+        private List<string> changedCells = new List<string> ();
+
+        public List<string> ChangedCells
+        {
+            get { return changedCells; }
+            set { changedCells = value; }
+        }
+
         /// <summary>
         /// Uses MyCell to create a 2d array.
         /// </summary>
@@ -31,6 +59,12 @@ namespace SpreadsheetEngine
         /// Member value for column.
         /// </summary>
         private int columnCount;
+
+        public Dictionary<string, List<string>> ReferencedCells
+        {
+            get { return this.referencedCells; }
+            set { this.referencedCells = value; }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
@@ -94,6 +128,23 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// checks if the expression is a formula by checking if it includes operators.
+        /// </summary>
+        /// <param name="expression">expression entered into cell.</param>
+        /// <returns>true if it is, false otherwise.</returns>
+        private bool IsFormula(string expression)
+        {
+            bool containsString = this.operatorList.Any(s => expression.Contains(s));
+
+            if (containsString)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Event handler for when a cell is changed.
         /// </summary>
         /// <param name="sender">The cell being modified.</param>
@@ -101,19 +152,32 @@ namespace SpreadsheetEngine
         private void MyCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             MyCell? curCell = sender as MyCell;
+            string key = Convert.ToChar(curCell.ColumnIndex + 65).ToString() + (curCell.RowIndex + 1).ToString();
             if (curCell != null)
             {
                 if (e.PropertyName == "CellText")
                 {
                     if (curCell.CellText[0] == '=')
                     {
-                        char columnLetter = curCell.CellText[1];
+                        bool testBool = this.IsFormula(curCell.CellText);
 
-                        int column = (int)columnLetter - 65;
-                        string sRow = curCell.CellText.Substring(2);
-                        int row = int.Parse(sRow);
-
-                        curCell.CellValue = this.cells[row, column].CellValue;
+                        if (testBool)
+                        {
+                            string equation = curCell.CellText[1..];
+                            AddToDict(equation, curCell);
+                            double? evaluation = this.EvaluateExpression(equation);
+                            curCell.CellValue = evaluation.ToString();
+                        }
+                        else
+                        {
+                            char columnLetter = curCell.CellText[1];
+                            int column = (int)columnLetter - 65;
+                            string sRow = curCell.CellText.Substring(2);
+                            int row = int.Parse(sRow) - 1;
+                            string cell = (columnLetter + sRow).ToString();
+                            this.AddToDict(cell, curCell);
+                            curCell.CellValue = this.cells[row, column].CellValue;
+                        }
                     }
                     else
                     {
@@ -122,9 +186,84 @@ namespace SpreadsheetEngine
                 }
             }
 
+            this.CellPropertyChanged?.Invoke(sender, e);
+
             if (this.CellPropertyChanged != null)
             {
                 this.CellPropertyChanged(sender, e);
+            }
+            this.variables[key] = double.Parse(curCell.CellValue);
+
+            if (this.referencedCells.ContainsKey(key))  //if the dictionary is being changed.
+            {
+                for (int i = 0; i < this.referencedCells[key].Count; i++)
+                {
+                    int column = 0, row = 0;
+                    this.GetRowCol(ref row, ref column, key, i);
+                    string equation = this.cells[row, column].CellText;
+                    double? evaluation = this.EvaluateExpression(equation);
+                    this.cells[row, column].CellValue = evaluation.ToString();
+                    string col = column.ToString();
+                    string rows = row.ToString();
+                    this.changedCells.Add(col + rows);
+                }
+
+            }
+
+
+            //this.variables[key] = double.Parse(curCell.CellValue);
+        }
+
+        private double? EvaluateExpression (string expression)
+        {
+            ExpressionTree test = new ExpressionTree(expression, this.variables);
+            test.MakeExpressionTree(expression);
+            double? evaluation = test.Evaluate();
+            return evaluation;
+        }
+
+        /// <summary>
+        /// returns the row and column of the referencedCell values
+        /// </summary>
+        /// <param name="row">row int.</param>
+        /// <param name="col">column int.</param>
+        /// <param name="key">key of dict.</param>
+        /// <param name="i">value #.</param>
+        private void GetRowCol (ref int row, ref int col, string key, int i)
+        {
+            char columnLetter = this.referencedCells[key][i][0];
+            col = (int)columnLetter - 65;
+            string sRow = this.referencedCells[key][i].Substring(1);
+            row = int.Parse(sRow) - 1;
+        }
+
+        /// <summary>
+        /// adds the cells that reference other cells to the dictionary.
+        /// </summary>
+        /// <param name="expression">expression entered into cell. </param>
+        private void AddToDict(string expression, MyCell curCell)
+        {
+            ExpressionTree test = new ExpressionTree(expression, this.variables);
+            List<string> sExpression = test.ShuntingYardAlgorithm(expression);
+            List<string> holder = new List<string>();
+            for (int i = 0; i < sExpression.Count; i++) 
+            {
+                bool isLetter = char.IsLetter(sExpression[i][0]);
+                if (isLetter)
+                {
+                    string cell = (Convert.ToChar(curCell.ColumnIndex + 65).ToString() + (curCell.RowIndex+1)).ToString();
+                    if (!this.referencedCells.ContainsKey(sExpression[i]))
+                    {
+                        holder.Add(cell);
+                        this.referencedCells.Add(sExpression[i], holder);
+                    }
+                    else
+                    {
+                        this.referencedCells[sExpression[i]].Append(cell);
+                    }
+
+
+                }
             }
         }
 

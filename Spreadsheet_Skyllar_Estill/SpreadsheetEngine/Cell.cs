@@ -33,11 +33,6 @@ namespace SpreadsheetEngine
         protected string cellValue;
 
         /// <summary>
-        /// Event for when the cell text is changed.
-        /// </summary>
-        public event PropertyChangedEventHandler? PropertyChanged = delegate { };
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Cell"/> class.
         /// </summary>
         /// <param name="inputRowIndex">what row.</param>
@@ -47,6 +42,11 @@ namespace SpreadsheetEngine
             this.rowIndex = inputRowIndex;
             this.columnIndex = inputColumnIndex;
         }
+
+        /// <summary>
+        /// Event for when the cell text is changed.
+        /// </summary>
+        public event PropertyChangedEventHandler? PropertyChanged = delegate { };
 
         /// <summary>
         /// Gets the row index of this cell.
@@ -87,7 +87,7 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
-        /// Gets the cellValue
+        /// Gets the cellValue.
         /// </summary>
         public string CellValue
         {

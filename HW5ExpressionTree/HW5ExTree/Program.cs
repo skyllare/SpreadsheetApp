@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.Design;
+using System.Reflection;
 using ExpressionTreeEngine;
 using ExpressionTreeEngine.Nodes;
 
@@ -42,7 +43,7 @@ public class Program
             {
                 ExpressionTree test = new ExpressionTree(expression, variables);
                 test.MakeExpressionTree(expression);
-                double evaluation = test.Evaluate();
+                double? evaluation = test.Evaluate();
                 Console.WriteLine(evaluation);
             }
         }

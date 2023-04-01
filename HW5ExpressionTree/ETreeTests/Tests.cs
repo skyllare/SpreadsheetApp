@@ -2,6 +2,7 @@
 // Copyright (c) Skyllar Estil. All rights reserved.
 // </copyright>
 using System.Linq.Expressions;
+using System.Reflection;
 using ExpressionTreeEngine;
 
 namespace ExpressionTreeTests
@@ -46,8 +47,8 @@ namespace ExpressionTreeTests
         [TestCase("A1*B1", 18.0)]
         [TestCase("A1-B1", 3.0)]
         [TestCase("A1+B1", 9.0)]
-        [TestCase("X+Y+Z", 0.0)]
-        public void TestVariableDivision(string n, double m)
+        [TestCase("X+Y+Z", null)]
+        public void TestVariableDivision(string n, double? m)
         {
             ExpressionTree tTree = new ExpressionTree(n, this.vVariables);
             Assert.That(tTree.Evaluate(), Is.EqualTo(m).Within(0.00001));

@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using ExpressionTreeEngine.Nodes;
 
 namespace ExpressionTreeEngine
@@ -13,6 +14,11 @@ namespace ExpressionTreeEngine
     /// </summary>
     public class ExpressionTree
     {
+        /// <summary>
+        /// if the dictionary has values for the needed keys.
+        /// </summary>
+        private bool dictTest = true;
+
         /// <summary>
         /// root node of the tree.
         /// </summary>
@@ -53,9 +59,16 @@ namespace ExpressionTreeEngine
         /// evaluates the expression to a double value.
         /// </summary>
         /// <returns>The value of the expression.</returns>
-        public double Evaluate()
+        public double? Evaluate()
         {
-            return this.root.Evaluate();
+            if (this.dictTest)
+            {
+                return this.root.Evaluate();
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -66,6 +79,8 @@ namespace ExpressionTreeEngine
         public ExpressionTreeNode MakeExpressionTree(string expression)
         {
             List<string> sExpression = this.ShuntingYardAlgorithm(expression);
+            
+
             for (int i = 0; i < sExpression.Count; i++)
             {
                 if (!OperatorNodeFactory.TypesOfOperators.Contains(sExpression[i]))
@@ -78,13 +93,15 @@ namespace ExpressionTreeEngine
                     }
                     else
                     {
+                        this.dictTest = this.TestDictionary(sExpression);
                         ExpressionTreeVariableNode varNodeTemp = new ExpressionTreeVariableNode(sExpression[i], ref this.variables);
                         this.sOutput.Push(new ExpressionTreeConstNode(Convert.ToDouble(varNodeTemp.Evaluate().ToString())));
                     }
                 }
                 else
                 {
-                    ExpressionTreeOperatorNode temp = OperatorNodeFactory.CreateOperatorNode(Convert.ToChar(sExpression[i]));
+                    OperatorNodeFactory factory = new OperatorNodeFactory();
+                    ExpressionTreeOperatorNode temp = factory.CreateOperatorNode(Convert.ToChar(sExpression[i]));
 
                     if (this.sOutput.Count != 0)
                     {
@@ -96,7 +113,9 @@ namespace ExpressionTreeEngine
                 }
             }
 
-            return this.sOutput.Pop();
+                return this.sOutput.Pop();
+
+
         }
 
         /// <summary>
@@ -104,14 +123,13 @@ namespace ExpressionTreeEngine
         /// </summary>
         /// <param name="expression">og expression.</param>
         /// <returns>postfix expression.</returns>
-        private List<string> ShuntingYardAlgorithm(string expression)
+        public List<string> ShuntingYardAlgorithm(string expression)
         {
             Stack<string> operatorStack = new Stack<string>();
             List<string> operatorString = new List<string>();
             string output = string.Empty;
             string var = string.Empty;
             string value = string.Empty;
-
             for (int i = 0; i < expression.Length; i++)
             {
                 if (OperatorNodeFactory.TypesOfOperators.Contains(expression[i].ToString()))
@@ -187,6 +205,31 @@ namespace ExpressionTreeEngine
             }
 
             return -1;
+        }
+
+        /// <summary>
+        /// test if the key is in the dictionary.
+        /// </summary>
+        /// <param name="expression">expression.</param>
+        /// <returns>true if all the keys are present, false if they aren't.</returns>
+        private bool TestDictionary(List<string> expression)
+        {
+            for (int i = 0; i < expression.Count; i++)
+            {
+                if (!OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
+                {
+                    try
+                    {
+                        double value = this.variables[expression[i]];
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }
