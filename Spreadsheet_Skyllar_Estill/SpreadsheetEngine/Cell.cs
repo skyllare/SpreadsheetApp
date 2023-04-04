@@ -80,9 +80,12 @@ namespace SpreadsheetEngine
                 {
                     return;
                 }
-
+                
                 this.cellText = value;
-                this.PropertyChanged(this, new PropertyChangedEventArgs("CellText"));
+                if (this.cellText != null)
+                {
+                    this.PropertyChanged(this, new PropertyChangedEventArgs("CellText"));
+                }
             }
         }
 

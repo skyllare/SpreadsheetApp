@@ -192,7 +192,10 @@ namespace SpreadsheetEngine
             {
                 this.CellPropertyChanged(sender, e);
             }
-            this.variables[key] = double.Parse(curCell.CellValue);
+            if (curCell.CellValue != null)
+            {
+                this.variables[key] = double.Parse(curCell.CellValue);
+            }
 
             if (this.referencedCells.ContainsKey(key))  //if the dictionary is being changed.
             {
