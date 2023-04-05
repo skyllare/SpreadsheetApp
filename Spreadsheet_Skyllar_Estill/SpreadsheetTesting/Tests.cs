@@ -57,5 +57,12 @@ namespace SpreadsheetTesting
             this.spreadsheet.GetCell(0, 0).CellText = "12";
             Assert.That(this.spreadsheet.GetCell(0, 1).CellValue, Is.EqualTo("12"));
         }
+
+        [Test]
+        public void TestNullCells()
+        {
+            this.spreadsheet.GetCell(0, 0).CellText = "=C4";
+            Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo(null));
+        }
     }
 }
