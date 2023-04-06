@@ -33,6 +33,11 @@ namespace SpreadsheetEngine
         protected string cellValue;
 
         /// <summary>
+        /// color property. Defualt white.
+        /// </summary>
+        private uint BGColor = 0xFFFFFFFF;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Cell"/> class.
         /// </summary>
         /// <param name="inputRowIndex">what row.</param>
@@ -80,11 +85,31 @@ namespace SpreadsheetEngine
                 {
                     return;
                 }
-                
+
                 this.cellText = value;
                 if (this.cellText != null)
                 {
                     this.PropertyChanged(this, new PropertyChangedEventArgs("CellText"));
+                }
+            }
+        }
+
+        public uint BGCOlor
+        {
+            get
+            {
+                return this.BGColor; 
+            }
+            set 
+            {
+                if (this.BGColor == value)
+                {
+                    return;
+                }
+                else
+                {
+                    this.BGColor = value;
+                    this.PropertyChanged(this, new PropertyChangedEventArgs("BGColor"));
                 }
             }
         }
@@ -96,5 +121,7 @@ namespace SpreadsheetEngine
         {
             get { return this.cellValue; }
         }
+
+        
     }
 }

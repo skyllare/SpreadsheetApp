@@ -58,6 +58,9 @@ namespace SpreadsheetTesting
             Assert.That(this.spreadsheet.GetCell(0, 1).CellValue, Is.EqualTo("12"));
         }
 
+        /// <summary>
+        /// tests that setting a cell equal to a cell with no value makes the cell null as well.
+        /// </summary>
         [Test]
         public void TestNullCells()
         {
