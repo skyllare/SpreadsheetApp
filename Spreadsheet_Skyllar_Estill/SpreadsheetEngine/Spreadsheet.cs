@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data.Common;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -188,11 +189,11 @@ namespace SpreadsheetEngine
 
             this.CellPropertyChanged?.Invoke(sender, e);
 
-            if (this.CellPropertyChanged != null)
+            if (this.CellPropertyChanged != null && e.PropertyName != "BGColor")
             {
                 this.CellPropertyChanged(sender, e);
             }
-            if (curCell.CellValue != null)
+            if (curCell.CellValue != null) 
             {
                 this.variables[key] = double.Parse(curCell.CellValue);
             }
@@ -211,10 +212,7 @@ namespace SpreadsheetEngine
                     this.changedCells.Add(col + rows);
                 }
 
-            }
-
-
-            //this.variables[key] = double.Parse(curCell.CellValue);
+            }      
         }
 
         private double? EvaluateExpression (string expression)

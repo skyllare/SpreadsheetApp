@@ -147,7 +147,7 @@ namespace Spreadsheet_Skyllar_Estill
             this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
             for (int i = 0; i < this.spreadsheet.ChangedCells.Count; i++)
             {
-                col = int.Parse(this.spreadsheet.ChangedCells[i].Substring(0,1));
+                col = int.Parse(this.spreadsheet.ChangedCells[i].Substring(0, 1));
                 row = int.Parse(this.spreadsheet.ChangedCells[i].Substring(1));
                 editedCell = this.spreadsheet.GetCell(row, col);
                 this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
@@ -173,7 +173,33 @@ namespace Spreadsheet_Skyllar_Estill
                 {
                     this.dataGridView1.Rows[row].Cells[col].Value = curCell.CellValue;
                 }
+                else if (e.PropertyName == "BGColor")
+                {
+                    uint colorValue = curCell.BGCOlor;
+                    Color color = Color.FromArgb((int)colorValue);
+                    this.dataGridView1.Rows[row].Cells[col].Style.BackColor = color;
+                }
             }
         }
+
+        private void changeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog myDialog = new ColorDialog();
+
+            if (myDialog.ShowDialog() == DialogResult.OK)
+            {
+                Color color = myDialog.Color;
+
+                foreach (DataGridViewCell cell in this.dataGridView1.SelectedCells)
+                {
+                    /*
+                     * Cell editedCell = this.spreadsheet.GetCell(row, col);
+                     **/
+                    Cell editedCell = this.spreadsheet.GetCell(cell.RowIndex, cell.ColumnIndex);
+                    editedCell.BGCOlor = (uint)(color.ToArgb());
+                }
+            }
+        }
+
     }
 }
