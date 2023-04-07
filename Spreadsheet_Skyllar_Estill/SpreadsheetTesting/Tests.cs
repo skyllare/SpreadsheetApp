@@ -3,6 +3,9 @@
 // </copyright>
 
 using SpreadsheetEngine;
+using System.Diagnostics.CodeAnalysis;
+using static System.Net.Mime.MediaTypeNames;
+
 
 namespace SpreadsheetTesting
 {
@@ -66,6 +69,15 @@ namespace SpreadsheetTesting
         {
             this.spreadsheet.GetCell(0, 0).CellText = "=C4";
             Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo(null));
+        }
+
+        
+        public void TestUndo()
+        {
+            this.spreadsheet.AddUndoText(null, null, 1, 0);
+            Command undo = this.spreadsheet.GetUndo();
+            Assert.That(undo.GetCol, Is.EqualTo(0));
+            Assert.That(undo.GetRow, Is.EqualTo(1));
         }
     }
 }

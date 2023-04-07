@@ -98,9 +98,10 @@ namespace SpreadsheetEngine
         {
             get
             {
-                return this.BGColor; 
+                return this.BGColor;
             }
-            set 
+
+            set
             {
                 if (this.BGColor == value)
                 {

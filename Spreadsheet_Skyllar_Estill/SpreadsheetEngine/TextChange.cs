@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpreadsheetEngine
 {
-    internal class TextChange : Command
+    public class TextChange : Command
     {
         private string currentText;
 

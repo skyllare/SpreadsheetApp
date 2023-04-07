@@ -144,8 +144,7 @@ namespace Spreadsheet_Skyllar_Estill
             this.spreadsheet.AddUndoText(editedCell.CellText, text, row, col);
             editedCell.CellText = text;
             this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
-            changeReferencedCells();
-            this.spreadsheet.ChangedCells.Clear();
+            ChangeReferencedCells();
         }
 
         /// <summary>
@@ -175,6 +174,11 @@ namespace Spreadsheet_Skyllar_Estill
             }
         }
 
+        /// <summary>
+        /// functionality for change color menu button press.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
         private void changeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ColorDialog myDialog = new ColorDialog();
@@ -182,38 +186,52 @@ namespace Spreadsheet_Skyllar_Estill
             if (myDialog.ShowDialog() == DialogResult.OK)
             {
                 Color color = myDialog.Color;
-                //uint iColor = (uint)color.ToArgb();
+                uint iColor = (uint)color.ToArgb();
 
                 foreach (DataGridViewCell cell in this.dataGridView1.SelectedCells)
                 {
                     Cell editedCell = this.spreadsheet.GetCell(cell.RowIndex, cell.ColumnIndex);
-                    this.spreadsheet.AddUndoColor((uint)(color.ToArgb()), editedCell.BGCOlor, cell.RowIndex, cell.ColumnIndex);
-                    editedCell.BGCOlor = (uint)(color.ToArgb());
+                    this.spreadsheet.AddUndoColor(iColor, editedCell.BGCOlor, cell.RowIndex, cell.ColumnIndex);
+                    editedCell.BGCOlor = iColor;
                 }
+                
             }
         }
 
+        /// <summary>
+        /// functionality for redo menu button press.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (this.spreadsheet != null)
             {
                 Command redo = this.spreadsheet.GetRedo();
                 redo.Execute(this.spreadsheet);
-                changeReferencedCells();
+                ChangeReferencedCells();
             }
         }
 
+        /// <summary>
+        /// functionality for undo menu button press.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (this.spreadsheet != null)
             {
                 Command undo = this.spreadsheet.GetUndo();
                 undo.Unexecute(this.spreadsheet);
-                changeReferencedCells();
+                ChangeReferencedCells();
             }
         }
 
-        public void changeReferencedCells()
+        /// <summary>
+        /// changes values of all cells that are reference another cell.
+        /// </summary>
+        public void ChangeReferencedCells()
         {
             for (int i = 0; i < this.spreadsheet.ChangedCells.Count; i++)
             {
@@ -222,6 +240,7 @@ namespace Spreadsheet_Skyllar_Estill
                 Cell editedCell = this.spreadsheet.GetCell(row, col);
                 this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
             }
+            this.spreadsheet.ChangedCells.Clear();
         }
     }
 }
