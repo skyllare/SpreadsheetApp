@@ -255,19 +255,37 @@ namespace Spreadsheet_Skyllar_Estill
                 if (this.spreadsheet.Redo.Count == 0)
                 {
                     this.redoToolStripMenuItem.Enabled = false;
+                    this.redoToolStripMenuItem.Text = "Redo";
                 }
                 else
                 {
                     this.redoToolStripMenuItem.Enabled = true;
+                    if (this.spreadsheet.Redo.Peek().GetType() == typeof(ColorChange))
+                    {
+                        this.redoToolStripMenuItem.Text = "Redo background color change";
+                    }
+                    else if (this.spreadsheet.Redo.Peek().GetType() == typeof(TextChange))
+                    {
+                        this.redoToolStripMenuItem.Text = "Redo text change";
+                    }
                 }
 
                 if (this.spreadsheet.Undo.Count == 0)
                 {
                     this.undoToolStripMenuItem.Enabled = false;
+                    this.redoToolStripMenuItem.Text = "Undo";
                 }
                 else
                 {
                     this.undoToolStripMenuItem.Enabled = true;
+                    if (this.spreadsheet.Undo.Peek().GetType() == typeof(ColorChange))
+                    {
+                        this.undoToolStripMenuItem.Text = "Undo background color change";
+                    }
+                    else if (this.spreadsheet.Undo.Peek().GetType() == typeof(TextChange))
+                    {
+                        this.undoToolStripMenuItem.Text = "Undo text change";
+                    }
                 }
             }
         }
