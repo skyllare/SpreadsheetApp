@@ -8,5 +8,8 @@ namespace SpreadsheetEngine
 {
     internal interface Command
     {
+        void Execute(Spreadsheet s);
+
+        void Unexecute(Spreadsheet s);
     }
 }
