@@ -144,14 +144,7 @@ namespace Spreadsheet_Skyllar_Estill
             this.spreadsheet.AddUndoText(editedCell.CellText, text, row, col);
             editedCell.CellText = text;
             this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
-            for (int i = 0; i < this.spreadsheet.ChangedCells.Count; i++)
-            {
-                col = int.Parse(this.spreadsheet.ChangedCells[i].Substring(0, 1));
-                row = int.Parse(this.spreadsheet.ChangedCells[i].Substring(1));
-                editedCell = this.spreadsheet.GetCell(row, col);
-                this.spreadsheet.AddUndoText(editedCell.CellText, text, row, col);
-                this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
-            }
+            changeReferencedCells();
             this.spreadsheet.ChangedCells.Clear();
         }
 
@@ -206,6 +199,7 @@ namespace Spreadsheet_Skyllar_Estill
             {
                 Command redo = this.spreadsheet.GetRedo();
                 redo.Execute(this.spreadsheet);
+                changeReferencedCells();
             }
         }
 
@@ -215,6 +209,18 @@ namespace Spreadsheet_Skyllar_Estill
             {
                 Command undo = this.spreadsheet.GetUndo();
                 undo.Unexecute(this.spreadsheet);
+                changeReferencedCells();
+            }
+        }
+
+        public void changeReferencedCells()
+        {
+            for (int i = 0; i < this.spreadsheet.ChangedCells.Count; i++)
+            {
+                int col = int.Parse(this.spreadsheet.ChangedCells[i].Substring(0, 1));
+                int row = int.Parse(this.spreadsheet.ChangedCells[i].Substring(1));
+                Cell editedCell = this.spreadsheet.GetCell(row, col);
+                this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
             }
         }
     }
