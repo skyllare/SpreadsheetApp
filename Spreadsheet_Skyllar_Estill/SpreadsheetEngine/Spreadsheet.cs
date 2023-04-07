@@ -23,6 +23,10 @@ namespace SpreadsheetEngine
     /// </summary>
     public class Spreadsheet
     {
+        private Stack<Command> undoColor = new Stack<Command>();
+
+        private Stack<ColorChange> redoColor = new Stack<ColorChange>();
+
         /// <summary>
         /// values of the cells.
         /// </summary>
@@ -42,6 +46,19 @@ namespace SpreadsheetEngine
         /// List of cells that are changed.
         /// </summary>
         private List<string> changedCells = new List<string>();
+
+        public void AddUndo(uint currentColor, uint previousColor, int row, int col)
+        {
+            ColorChange undo = new ColorChange();
+            undo.UndoColor(currentColor, previousColor, row, col);
+            this.undoColor.Push(undo);
+        }
+
+        public Command GetUndo()
+        {
+            Command undo = this.undoColor.Pop();
+            return undo;
+        }
 
         /// <summary>
         /// Gets or sets changed cells list.

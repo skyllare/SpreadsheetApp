@@ -16,6 +16,33 @@ namespace SpreadsheetEngine
 
         private int col;
 
+        public uint CurrentColor
+        {
+            get
+            {
+                return currentColor;
+            }
+        }
+
+        public uint PreviousColor
+        {
+            get
+            {
+                return previousColor;
+            }
+        }
+
+        public int GetRow()
+        {
+            return this.row;
+        }
+
+        public int GetCol()
+        {
+            return this.col;
+        }
+
+
         public ColorChange() { }
 
         public void Execute(Spreadsheet s)
@@ -37,7 +64,7 @@ namespace SpreadsheetEngine
             uint tempPrevousColor = cell.BGCOlor;
             this.currentColor = this.previousColor;
             this.previousColor = tempPrevousColor;
-            cell.BGCOlor = this.currentColor ;
+            cell.BGCOlor = this.currentColor;
         }
     }
 }

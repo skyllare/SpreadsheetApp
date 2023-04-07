@@ -6,10 +6,15 @@ using System.Threading.Tasks;
 
 namespace SpreadsheetEngine
 {
-    internal interface Command
+    public interface Command
     {
         void Execute(Spreadsheet s);
 
         void Unexecute(Spreadsheet s);
+
+        int GetRow();
+
+        int GetCol();
+
     }
 }

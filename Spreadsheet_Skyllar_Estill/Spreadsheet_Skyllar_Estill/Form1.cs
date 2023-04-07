@@ -189,13 +189,12 @@ namespace Spreadsheet_Skyllar_Estill
             if (myDialog.ShowDialog() == DialogResult.OK)
             {
                 Color color = myDialog.Color;
+                //uint iColor = (uint)color.ToArgb();
 
                 foreach (DataGridViewCell cell in this.dataGridView1.SelectedCells)
                 {
-                    /*
-                     * Cell editedCell = this.spreadsheet.GetCell(row, col);
-                     **/
                     Cell editedCell = this.spreadsheet.GetCell(cell.RowIndex, cell.ColumnIndex);
+                    this.spreadsheet.AddUndo((uint)(color.ToArgb()), editedCell.BGCOlor, cell.RowIndex, cell.ColumnIndex);
                     editedCell.BGCOlor = (uint)(color.ToArgb());
                 }
             }
@@ -208,7 +207,8 @@ namespace Spreadsheet_Skyllar_Estill
 
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            Command undo = this.spreadsheet.GetUndo();
+            undo.Unexecute(this.spreadsheet);
         }
     }
 }
