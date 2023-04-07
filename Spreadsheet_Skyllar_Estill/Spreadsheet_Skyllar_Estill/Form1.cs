@@ -201,5 +201,14 @@ namespace Spreadsheet_Skyllar_Estill
             }
         }
 
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

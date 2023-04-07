@@ -38,12 +38,18 @@ namespace SpreadsheetEngine
         /// </summary>
         private List<string> operatorList = new List<string> { "+", "-", "/", "*" };
 
-        private List<string> changedCells = new List<string> ();
+        /// <summary>
+        /// List of cells that are changed.
+        /// </summary>
+        private List<string> changedCells = new List<string>();
 
+        /// <summary>
+        /// Gets or sets changed cells list.
+        /// </summary>
         public List<string> ChangedCells
         {
-            get { return changedCells; }
-            set { changedCells = value; }
+            get { return this.changedCells; }
+            set { this.changedCells = value; }
         }
 
         /// <summary>
@@ -61,6 +67,9 @@ namespace SpreadsheetEngine
         /// </summary>
         private int columnCount;
 
+        /// <summary>
+        /// Gets or sets the list of cells that reference another cell.
+        /// </summary>
         public Dictionary<string, List<string>> ReferencedCells
         {
             get { return this.referencedCells; }
