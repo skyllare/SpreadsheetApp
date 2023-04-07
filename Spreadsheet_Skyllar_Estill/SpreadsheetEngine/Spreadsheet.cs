@@ -23,9 +23,9 @@ namespace SpreadsheetEngine
     /// </summary>
     public class Spreadsheet
     {
-        private Stack<Command> undoColor = new Stack<Command>();
+        private Stack<Command> undo = new Stack<Command>();
 
-        private Stack<ColorChange> redoColor = new Stack<ColorChange>();
+        private Stack<Command> redo = new Stack<Command>();
 
         /// <summary>
         /// values of the cells.
@@ -47,16 +47,31 @@ namespace SpreadsheetEngine
         /// </summary>
         private List<string> changedCells = new List<string>();
 
-        public void AddUndo(uint currentColor, uint previousColor, int row, int col)
+        public void AddUndoText(string currentText, string previousText, int row, int col)
+        {
+            TextChange undo = new TextChange();
+            undo.UndoText(previousText, currentText, row, col);
+            this.undo.Push(undo);
+        }
+
+        public void AddUndoColor(uint currentColor, uint previousColor, int row, int col)
         {
             ColorChange undo = new ColorChange();
             undo.UndoColor(currentColor, previousColor, row, col);
-            this.undoColor.Push(undo);
+            this.undo.Push(undo);
+        }
+
+        public Command GetRedo()
+        {
+            Command redo = this.redo.Pop();
+            this.undo.Push(redo);
+            return redo;
         }
 
         public Command GetUndo()
         {
-            Command undo = this.undoColor.Pop();
+            Command undo = this.undo.Pop();
+            this.redo.Push(undo);
             return undo;
         }
 
@@ -180,7 +195,7 @@ namespace SpreadsheetEngine
         {
             MyCell? curCell = sender as MyCell;
             string key = Convert.ToChar(curCell.ColumnIndex + 65).ToString() + (curCell.RowIndex + 1).ToString();
-            if (curCell != null)
+            if (curCell.CellText != null)
             {
                 if (e.PropertyName == "CellText")
                 {
@@ -212,6 +227,10 @@ namespace SpreadsheetEngine
                     }
                 }
             }
+            else
+            {
+                curCell.CellValue = null;
+            }
 
             this.CellPropertyChanged?.Invoke(sender, e);
 
@@ -224,7 +243,7 @@ namespace SpreadsheetEngine
                 this.variables[key] = double.Parse(curCell.CellValue);
             }
 
-            if (this.referencedCells.ContainsKey(key))  //if the dictionary is being changed.
+            if (this.referencedCells.ContainsKey(key))
             {
                 for (int i = 0; i < this.referencedCells[key].Count; i++)
                 {
@@ -238,7 +257,7 @@ namespace SpreadsheetEngine
                     this.changedCells.Add(col + rows);
                 }
 
-            }      
+            }
         }
 
         private double? EvaluateExpression (string expression)
@@ -288,8 +307,6 @@ namespace SpreadsheetEngine
                     {
                         this.referencedCells[sExpression[i]].Append(cell);
                     }
-
-
                 }
             }
         }

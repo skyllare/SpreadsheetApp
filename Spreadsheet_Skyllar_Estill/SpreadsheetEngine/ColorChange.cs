@@ -47,6 +47,12 @@ namespace SpreadsheetEngine
 
         public void Execute(Spreadsheet s)
         {
+            Cell cell = s.GetCell(this.row, this.col);
+            uint tempPrevousColor = cell.BGCOlor;
+            this.currentColor = this.previousColor;
+            this.previousColor = tempPrevousColor;
+            cell.BGCOlor = this.currentColor;
+
         }
 
 
@@ -57,6 +63,7 @@ namespace SpreadsheetEngine
             this.row = row;
             this.col = col;
         }
+
 
         public void Unexecute(Spreadsheet s)
         {

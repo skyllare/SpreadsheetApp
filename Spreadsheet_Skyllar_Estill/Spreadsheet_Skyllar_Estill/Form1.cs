@@ -3,6 +3,7 @@
 // </copyright>
 
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SpreadsheetEngine;
@@ -116,9 +117,7 @@ namespace Spreadsheet_Skyllar_Estill
         {
             string msg = string.Format("Editing Cell at ({0}, {1})", e.ColumnIndex + 1, e.RowIndex + 1);
             this.Text = msg;
-            /*int row = e.RowIndex; int col = e.ColumnIndex;
-            Cell selectedCell = this.spreadsheet.GetCell(row, col + 1);
-            this.dataGridView1.Rows[row].Cells[col].Value = selectedCell.CellText;*/
+            this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = this.spreadsheet.GetCell(e.RowIndex, e.ColumnIndex).CellText;
         }
 
         /// <summary>
@@ -142,7 +141,7 @@ namespace Spreadsheet_Skyllar_Estill
             {
                 text = string.Empty;
             }
-
+            this.spreadsheet.AddUndoText(editedCell.CellText, text, row, col);
             editedCell.CellText = text;
             this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
             for (int i = 0; i < this.spreadsheet.ChangedCells.Count; i++)
@@ -150,6 +149,7 @@ namespace Spreadsheet_Skyllar_Estill
                 col = int.Parse(this.spreadsheet.ChangedCells[i].Substring(0, 1));
                 row = int.Parse(this.spreadsheet.ChangedCells[i].Substring(1));
                 editedCell = this.spreadsheet.GetCell(row, col);
+                this.spreadsheet.AddUndoText(editedCell.CellText, text, row, col);
                 this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
             }
             this.spreadsheet.ChangedCells.Clear();
@@ -194,7 +194,7 @@ namespace Spreadsheet_Skyllar_Estill
                 foreach (DataGridViewCell cell in this.dataGridView1.SelectedCells)
                 {
                     Cell editedCell = this.spreadsheet.GetCell(cell.RowIndex, cell.ColumnIndex);
-                    this.spreadsheet.AddUndo((uint)(color.ToArgb()), editedCell.BGCOlor, cell.RowIndex, cell.ColumnIndex);
+                    this.spreadsheet.AddUndoColor((uint)(color.ToArgb()), editedCell.BGCOlor, cell.RowIndex, cell.ColumnIndex);
                     editedCell.BGCOlor = (uint)(color.ToArgb());
                 }
             }
@@ -202,13 +202,20 @@ namespace Spreadsheet_Skyllar_Estill
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if (this.spreadsheet != null)
+            {
+                Command redo = this.spreadsheet.GetRedo();
+                redo.Execute(this.spreadsheet);
+            }
         }
 
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Command undo = this.spreadsheet.GetUndo();
-            undo.Unexecute(this.spreadsheet);
+            if (this.spreadsheet != null)
+            {
+                Command undo = this.spreadsheet.GetUndo();
+                undo.Unexecute(this.spreadsheet);
+            }
         }
     }
 }

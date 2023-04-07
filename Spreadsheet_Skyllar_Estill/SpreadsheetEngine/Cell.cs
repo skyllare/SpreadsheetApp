@@ -87,7 +87,7 @@ namespace SpreadsheetEngine
                 }
 
                 this.cellText = value;
-                if (this.cellText != null)
+                //if (this.cellText != null)
                 {
                     this.PropertyChanged(this, new PropertyChangedEventArgs("CellText"));
                 }
