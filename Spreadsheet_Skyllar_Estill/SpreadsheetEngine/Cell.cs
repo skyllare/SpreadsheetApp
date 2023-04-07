@@ -87,13 +87,13 @@ namespace SpreadsheetEngine
                 }
 
                 this.cellText = value;
-                //if (this.cellText != null)
-                {
-                    this.PropertyChanged(this, new PropertyChangedEventArgs("CellText"));
-                }
+                this.PropertyChanged(this, new PropertyChangedEventArgs("CellText"));
             }
         }
 
+        /// <summary>
+        /// Gets or sets the color of the cell.
+        /// </summary>
         public uint BGCOlor
         {
             get
@@ -122,7 +122,5 @@ namespace SpreadsheetEngine
         {
             get { return this.cellValue; }
         }
-
-        
     }
 }

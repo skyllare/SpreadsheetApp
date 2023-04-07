@@ -6,7 +6,6 @@ using SpreadsheetEngine;
 using System.Diagnostics.CodeAnalysis;
 using static System.Net.Mime.MediaTypeNames;
 
-
 namespace SpreadsheetTesting
 {
     /// <summary>
@@ -71,7 +70,9 @@ namespace SpreadsheetTesting
             Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo(null));
         }
 
-        
+        /// <summary>
+        /// Tests that undo has the proper cell.
+        /// </summary>
         public void TestUndo()
         {
             this.spreadsheet.AddUndoText(null, null, 1, 0);
