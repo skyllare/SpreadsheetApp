@@ -69,28 +69,6 @@ namespace SpreadsheetEngine
         private int columnCount;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
-        /// </summary>
-        /// <param name="numRows">Number of rows for the 2d array.</param>
-        /// <param name="numCols">Number of columns for the 2d array.</param>
-        public Spreadsheet(int numRows, int numCols)
-        {
-            this.RowCount = numRows;
-            this.ColumnCount = numCols;
-
-            this.cells = new MyCell[numRows, numCols];
-
-            for (int row = 0; row < numRows; row++)
-            {
-                for (int col = 0; col < numCols; col++)
-                {
-                    this.cells[row, col] = new MyCell(row, col);
-                    this.cells[row, col].PropertyChanged += this.MyCellPropertyChanged;
-                }
-            }
-        }
-
-        /// <summary>
         /// event for when a cell is changed.
         /// </summary>
         public event PropertyChangedEventHandler? CellPropertyChanged = delegate { };
@@ -129,6 +107,50 @@ namespace SpreadsheetEngine
         {
             get { return this.rowCount; }
             set { this.rowCount = value; }
+        }
+
+        /// <summary>
+        /// Gets undo stack.
+        /// </summary>
+        public Stack<Command> Undo
+        {
+            get
+            {
+                return this.undo;
+            }
+        }
+
+        /// <summary>
+        /// Gets redo stack.
+        /// </summary>
+        public Stack<Command> Redo
+        {
+            get
+            {
+                return this.redo;
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
+        /// </summary>
+        /// <param name="numRows">Number of rows for the 2d array.</param>
+        /// <param name="numCols">Number of columns for the 2d array.</param>
+        public Spreadsheet(int numRows, int numCols)
+        {
+            this.RowCount = numRows;
+            this.ColumnCount = numCols;
+
+            this.cells = new MyCell[numRows, numCols];
+
+            for (int row = 0; row < numRows; row++)
+            {
+                for (int col = 0; col < numCols; col++)
+                {
+                    this.cells[row, col] = new MyCell(row, col);
+                    this.cells[row, col].PropertyChanged += this.MyCellPropertyChanged;
+                }
+            }
         }
 
         /// <summary>

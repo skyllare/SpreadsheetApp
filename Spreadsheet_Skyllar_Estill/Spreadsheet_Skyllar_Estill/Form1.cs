@@ -242,5 +242,34 @@ namespace Spreadsheet_Skyllar_Estill
             }
             this.spreadsheet.ChangedCells.Clear();
         }
+
+        /// <summary>
+        /// disables the menu strip is the redo or undo stacks are null.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.spreadsheet != null)
+            {
+                if (this.spreadsheet.Redo.Count == 0)
+                {
+                    this.redoToolStripMenuItem.Enabled = false;
+                }
+                else
+                {
+                    this.redoToolStripMenuItem.Enabled = true;
+                }
+
+                if (this.spreadsheet.Undo.Count == 0)
+                {
+                    this.undoToolStripMenuItem.Enabled = false;
+                }
+                else
+                {
+                    this.undoToolStripMenuItem.Enabled = true;
+                }
+            }
+        }
     }
 }
