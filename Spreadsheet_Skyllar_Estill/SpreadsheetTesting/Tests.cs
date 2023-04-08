@@ -3,6 +3,8 @@
 // </copyright>
 
 using SpreadsheetEngine;
+using System.Diagnostics.CodeAnalysis;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SpreadsheetTesting
 {
@@ -56,6 +58,27 @@ namespace SpreadsheetTesting
             this.spreadsheet.GetCell(0, 1).CellText = "=A1";
             this.spreadsheet.GetCell(0, 0).CellText = "12";
             Assert.That(this.spreadsheet.GetCell(0, 1).CellValue, Is.EqualTo("12"));
+        }
+
+        /// <summary>
+        /// tests that setting a cell equal to a cell with no value makes the cell null as well.
+        /// </summary>
+        [Test]
+        public void TestNullCells()
+        {
+            this.spreadsheet.GetCell(0, 0).CellText = "=C4";
+            Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo(null));
+        }
+
+        /// <summary>
+        /// Tests that undo has the proper cell.
+        /// </summary>
+        public void TestUndo()
+        {
+            this.spreadsheet.AddUndoText(null, null, 1, 0);
+            Command undo = this.spreadsheet.GetUndo();
+            Assert.That(undo.GetCol, Is.EqualTo(0));
+            Assert.That(undo.GetRow, Is.EqualTo(1));
         }
     }
 }

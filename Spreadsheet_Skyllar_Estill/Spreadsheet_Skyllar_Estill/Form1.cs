@@ -3,6 +3,7 @@
 // </copyright>
 
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SpreadsheetEngine;
@@ -116,9 +117,7 @@ namespace Spreadsheet_Skyllar_Estill
         {
             string msg = string.Format("Editing Cell at ({0}, {1})", e.ColumnIndex + 1, e.RowIndex + 1);
             this.Text = msg;
-            /*int row = e.RowIndex; int col = e.ColumnIndex;
-            Cell selectedCell = this.spreadsheet.GetCell(row, col + 1);
-            this.dataGridView1.Rows[row].Cells[col].Value = selectedCell.CellText;*/
+            this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = this.spreadsheet.GetCell(e.RowIndex, e.ColumnIndex).CellText;
         }
 
         /// <summary>
@@ -142,17 +141,10 @@ namespace Spreadsheet_Skyllar_Estill
             {
                 text = string.Empty;
             }
-
+            this.spreadsheet.AddUndoText(editedCell.CellText, text, row, col);
             editedCell.CellText = text;
             this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
-            for (int i = 0; i < this.spreadsheet.ChangedCells.Count; i++)
-            {
-                col = int.Parse(this.spreadsheet.ChangedCells[i].Substring(0,1));
-                row = int.Parse(this.spreadsheet.ChangedCells[i].Substring(1));
-                editedCell = this.spreadsheet.GetCell(row, col);
-                this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
-            }
-            this.spreadsheet.ChangedCells.Clear();
+            ChangeReferencedCells();
         }
 
         /// <summary>
@@ -172,6 +164,128 @@ namespace Spreadsheet_Skyllar_Estill
                 if (e.PropertyName == "CellText")
                 {
                     this.dataGridView1.Rows[row].Cells[col].Value = curCell.CellValue;
+                }
+                else if (e.PropertyName == "BGColor")
+                {
+                    uint colorValue = curCell.BGCOlor;
+                    Color color = Color.FromArgb((int)colorValue);
+                    this.dataGridView1.Rows[row].Cells[col].Style.BackColor = color;
+                }
+            }
+        }
+
+        /// <summary>
+        /// functionality for change color menu button press.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
+        private void changeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog myDialog = new ColorDialog();
+
+            if (myDialog.ShowDialog() == DialogResult.OK)
+            {
+                Color color = myDialog.Color;
+                uint iColor = (uint)color.ToArgb();
+
+                foreach (DataGridViewCell cell in this.dataGridView1.SelectedCells)
+                {
+                    Cell editedCell = this.spreadsheet.GetCell(cell.RowIndex, cell.ColumnIndex);
+                    this.spreadsheet.AddUndoColor(iColor, editedCell.BGCOlor, cell.RowIndex, cell.ColumnIndex);
+                    editedCell.BGCOlor = iColor;
+                }
+                
+            }
+        }
+
+        /// <summary>
+        /// functionality for redo menu button press.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.spreadsheet != null)
+            {
+                Command redo = this.spreadsheet.GetRedo();
+                redo.Execute(this.spreadsheet);
+                ChangeReferencedCells();
+            }
+        }
+
+        /// <summary>
+        /// functionality for undo menu button press.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.spreadsheet != null)
+            {
+                Command undo = this.spreadsheet.GetUndo();
+                undo.Unexecute(this.spreadsheet);
+                ChangeReferencedCells();
+            }
+        }
+
+        /// <summary>
+        /// changes values of all cells that are reference another cell.
+        /// </summary>
+        public void ChangeReferencedCells()
+        {
+            for (int i = 0; i < this.spreadsheet.ChangedCells.Count; i++)
+            {
+                int col = int.Parse(this.spreadsheet.ChangedCells[i].Substring(0, 1));
+                int row = int.Parse(this.spreadsheet.ChangedCells[i].Substring(1));
+                Cell editedCell = this.spreadsheet.GetCell(row, col);
+                this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
+            }
+            this.spreadsheet.ChangedCells.Clear();
+        }
+
+        /// <summary>
+        /// disables the menu strip is the redo or undo stacks are null.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.spreadsheet != null)
+            {
+                if (this.spreadsheet.Redo.Count == 0)
+                {
+                    this.redoToolStripMenuItem.Enabled = false;
+                    this.redoToolStripMenuItem.Text = "Redo";
+                }
+                else
+                {
+                    this.redoToolStripMenuItem.Enabled = true;
+                    if (this.spreadsheet.Redo.Peek().GetType() == typeof(ColorChange))
+                    {
+                        this.redoToolStripMenuItem.Text = "Redo background color change";
+                    }
+                    else if (this.spreadsheet.Redo.Peek().GetType() == typeof(TextChange))
+                    {
+                        this.redoToolStripMenuItem.Text = "Redo text change";
+                    }
+                }
+
+                if (this.spreadsheet.Undo.Count == 0)
+                {
+                    this.undoToolStripMenuItem.Enabled = false;
+                    this.redoToolStripMenuItem.Text = "Undo";
+                }
+                else
+                {
+                    this.undoToolStripMenuItem.Enabled = true;
+                    if (this.spreadsheet.Undo.Peek().GetType() == typeof(ColorChange))
+                    {
+                        this.undoToolStripMenuItem.Text = "Undo background color change";
+                    }
+                    else if (this.spreadsheet.Undo.Peek().GetType() == typeof(TextChange))
+                    {
+                        this.undoToolStripMenuItem.Text = "Undo text change";
+                    }
                 }
             }
         }
