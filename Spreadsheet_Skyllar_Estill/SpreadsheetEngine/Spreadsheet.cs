@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ExpressionTreeEngine;
 using static SpreadsheetEngine.Spreadsheet;
@@ -252,7 +253,8 @@ namespace SpreadsheetEngine
                     if (curCell.CellText[0] == '=')
                     {
                         bool testBool = this.IsFormula(curCell.CellText);
-
+                        Regex alphabetRegex = new Regex("[a-zA-Z]");
+                        bool testChar = alphabetRegex.IsMatch(curCell.CellText);
                         if (testBool)
                         {
                             string equation = curCell.CellText[1..];
@@ -260,7 +262,7 @@ namespace SpreadsheetEngine
                             double? evaluation = this.EvaluateExpression(equation);
                             curCell.CellValue = evaluation.ToString();
                         }
-                        else
+                        else if (testChar)
                         {
                             char columnLetter = curCell.CellText[1];
                             int column = (int)columnLetter - 65;
@@ -269,6 +271,10 @@ namespace SpreadsheetEngine
                             string cell = (columnLetter + sRow).ToString();
                             this.AddToDict(cell, curCell);
                             curCell.CellValue = this.cells[row, column].CellValue;
+                        }
+                        else
+                        {
+                            curCell.CellValue = curCell.CellText.Substring(1);
                         }
                     }
                     else
