@@ -170,6 +170,7 @@ namespace Spreadsheet_Skyllar_Estill
                     uint colorValue = curCell.BGCOlor;
                     Color color = Color.FromArgb((int)colorValue);
                     this.dataGridView1.Rows[row].Cells[col].Style.BackColor = color;
+                    //variables.
                 }
             }
         }
@@ -288,6 +289,35 @@ namespace Spreadsheet_Skyllar_Estill
                     }
                 }
             }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Filter = "*.xml|";
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show("Saving to " + dialog.FileName);
+                }
+                this.spreadsheet.SaveSpreadsheet();
+            }
+        }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Filter = "*.xml|";
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show(dialog.FileName);
+                }
+
+                System.IO.TextReader readFile = new StreamReader(dialog.FileName);
+ 
+            }
+
         }
     }
 }

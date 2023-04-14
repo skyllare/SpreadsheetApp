@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
 using ExpressionTreeEngine;
 using static SpreadsheetEngine.Spreadsheet;
 
@@ -302,20 +303,19 @@ namespace SpreadsheetEngine
 
             foreach (string key in this.referencedCells.Keys)
             {
-                    for (int i = 0; i < this.referencedCells[key].Count; i++)
-                    {
-                        int column = 0, row = 0;
-                        this.GetRowCol(ref row, ref column, key, i);
-                        string equation = this.cells[row, column].CellText;
-                        double? evaluation = this.EvaluateExpression(equation);
-                        this.cells[row, column].CellValue = evaluation.ToString();
-                        string col = column.ToString();
-                        string rows = row.ToString();
-                        this.changedCells.Add(col + rows);
-                        string tempKey = Convert.ToChar(column + 65).ToString() + (row + 1).ToString();
-                        this.variables[tempKey] = double.Parse(this.cells[row, column].CellValue);
-                    }
-                  //  key = this.referencedCells[j];
+                for (int i = 0; i < this.referencedCells[key].Count; i++)
+                {
+                    int column = 0, row = 0;
+                    this.GetRowCol(ref row, ref column, key, i);
+                    string equation = this.cells[row, column].CellText;
+                    double? evaluation = this.EvaluateExpression(equation);
+                    this.cells[row, column].CellValue = evaluation.ToString();
+                    string col = column.ToString();
+                    string rows = row.ToString();
+                    this.changedCells.Add(col + rows);
+                    string tempKey = this.CellName(row, column);
+                    this.variables[tempKey] = double.Parse(this.cells[row, column].CellValue);
+                }
             }
         }
 
@@ -376,6 +376,37 @@ namespace SpreadsheetEngine
             }
         }
 
+        /// <summary>
+        /// saves spreadsheet data to XML file.
+        /// </summary>
+        public void SaveSpreadsheet()
+        {
+            XmlWriter xmlWriter = XmlWriter.Create("test.xml");
+            xmlWriter.WriteStartDocument();
+            xmlWriter.WriteStartElement("spreadsheet");
+            for (int i = 0; i <= this.undo.Count(); i++)
+            {
+                //get rid of duplicates
+                Command undo = this.undo.Pop();
+                int row = undo.GetRow();
+                int col = undo.GetCol();
+                string? cellName = this.CellName(row, col);
+                Cell? tempCell = this.GetCell(row, col);
+                xmlWriter.WriteStartElement("cell");
+                xmlWriter.WriteAttributeString("name", cellName);
+                xmlWriter.WriteElementString("bgcolor", tempCell.BGCOlor.ToString());
+                xmlWriter.WriteElementString("text", tempCell.CellText);
+                xmlWriter.WriteEndElement();
+            }
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteEndDocument();
+            xmlWriter.Close();
+        }
+
+        private string CellName(int row, int col)
+        {
+            return Convert.ToChar(col + 65).ToString() + (row + 1).ToString();
+        }
         /// <summary>
         /// Concrete class to make Cell methods accessible for the spreadsheet class.
         /// </summary>
