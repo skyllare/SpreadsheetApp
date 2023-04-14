@@ -245,7 +245,7 @@ namespace SpreadsheetEngine
         private void MyCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             MyCell? curCell = sender as MyCell;
-            string key = Convert.ToChar(curCell.ColumnIndex + 65).ToString() + (curCell.RowIndex + 1).ToString();
+            string gkey = Convert.ToChar(curCell.ColumnIndex + 65).ToString() + (curCell.RowIndex + 1).ToString();
             if (curCell.CellText != null)
             {
                 if (e.PropertyName == "CellText")
@@ -297,22 +297,25 @@ namespace SpreadsheetEngine
 
             if (curCell.CellValue != null)
             {
-                this.variables[key] = double.Parse(curCell.CellValue);
+                this.variables[gkey] = double.Parse(curCell.CellValue);
             }
 
-            if (this.referencedCells.ContainsKey(key))
+            foreach (string key in this.referencedCells.Keys)
             {
-                for (int i = 0; i < this.referencedCells[key].Count; i++)
-                {
-                    int column = 0, row = 0;
-                    this.GetRowCol(ref row, ref column, key, i);
-                    string equation = this.cells[row, column].CellText;
-                    double? evaluation = this.EvaluateExpression(equation);
-                    this.cells[row, column].CellValue = evaluation.ToString();
-                    string col = column.ToString();
-                    string rows = row.ToString();
-                    this.changedCells.Add(col + rows);
-                }
+                    for (int i = 0; i < this.referencedCells[key].Count; i++)
+                    {
+                        int column = 0, row = 0;
+                        this.GetRowCol(ref row, ref column, key, i);
+                        string equation = this.cells[row, column].CellText;
+                        double? evaluation = this.EvaluateExpression(equation);
+                        this.cells[row, column].CellValue = evaluation.ToString();
+                        string col = column.ToString();
+                        string rows = row.ToString();
+                        this.changedCells.Add(col + rows);
+                        string tempKey = Convert.ToChar(column + 65).ToString() + (row + 1).ToString();
+                        this.variables[tempKey] = double.Parse(this.cells[row, column].CellValue);
+                    }
+                  //  key = this.referencedCells[j];
             }
         }
 

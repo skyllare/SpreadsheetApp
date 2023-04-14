@@ -273,7 +273,7 @@ namespace Spreadsheet_Skyllar_Estill
                 if (this.spreadsheet.Undo.Count == 0)
                 {
                     this.undoToolStripMenuItem.Enabled = false;
-                    this.redoToolStripMenuItem.Text = "Undo";
+                    this.undoToolStripMenuItem.Text = "Undo";
                 }
                 else
                 {
