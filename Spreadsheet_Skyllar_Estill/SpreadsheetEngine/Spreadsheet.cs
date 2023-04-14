@@ -379,28 +379,39 @@ namespace SpreadsheetEngine
         /// <summary>
         /// saves spreadsheet data to XML file.
         /// </summary>
-        public void SaveSpreadsheet()
+        public void SaveSpreadsheet(string name)
         {
-            XmlWriter xmlWriter = XmlWriter.Create("test.xml");
+            Stack<string> savedCells = new Stack<string>();
+            XmlWriter xmlWriter = XmlWriter.Create(name);
             xmlWriter.WriteStartDocument();
             xmlWriter.WriteStartElement("spreadsheet");
-            for (int i = 0; i <= this.undo.Count(); i++)
+            while (this.undo.Count != 0)
             {
                 //get rid of duplicates
                 Command undo = this.undo.Pop();
                 int row = undo.GetRow();
                 int col = undo.GetCol();
                 string? cellName = this.CellName(row, col);
-                Cell? tempCell = this.GetCell(row, col);
-                xmlWriter.WriteStartElement("cell");
-                xmlWriter.WriteAttributeString("name", cellName);
-                xmlWriter.WriteElementString("bgcolor", tempCell.BGCOlor.ToString());
-                xmlWriter.WriteElementString("text", tempCell.CellText);
-                xmlWriter.WriteEndElement();
+                if (!savedCells.Contains(cellName))
+                {
+                    savedCells.Push(cellName);
+                    Cell? tempCell = this.GetCell(row, col);
+                    xmlWriter.WriteStartElement("cell");
+                    xmlWriter.WriteAttributeString("name", cellName);
+                    xmlWriter.WriteElementString("bgcolor", tempCell.BGCOlor.ToString());
+                    xmlWriter.WriteElementString("text", tempCell.CellText);
+                    xmlWriter.WriteEndElement();
+                }
             }
+
             xmlWriter.WriteEndElement();
             xmlWriter.WriteEndDocument();
             xmlWriter.Close();
+        }
+
+        public void LoadSpreadsheet()
+        {
+
         }
 
         private string CellName(int row, int col)

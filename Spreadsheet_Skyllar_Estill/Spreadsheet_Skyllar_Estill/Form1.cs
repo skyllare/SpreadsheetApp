@@ -300,7 +300,11 @@ namespace Spreadsheet_Skyllar_Estill
                 {
                     MessageBox.Show("Saving to " + dialog.FileName);
                 }
-                this.spreadsheet.SaveSpreadsheet();
+
+                if (this.spreadsheet != null)
+                {
+                    this.spreadsheet.SaveSpreadsheet(dialog.FileName);
+                }
             }
         }
 
