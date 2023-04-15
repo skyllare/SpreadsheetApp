@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Data.Common;
 using System.Drawing;
 using System.IO;
@@ -14,6 +15,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
 using ExpressionTreeEngine;
 using static SpreadsheetEngine.Spreadsheet;
 
@@ -68,6 +70,28 @@ namespace SpreadsheetEngine
         /// Member value for column.
         /// </summary>
         private int columnCount;
+
+         /// <summary>
+        /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
+        /// </summary>
+        /// <param name="numRows">Number of rows for the 2d array.</param>
+        /// <param name="numCols">Number of columns for the 2d array.</param>
+        public Spreadsheet(int numRows, int numCols)
+        {
+            this.RowCount = numRows;
+            this.ColumnCount = numCols;
+
+            this.cells = new MyCell[numRows, numCols];
+
+            for (int row = 0; row < numRows; row++)
+            {
+                for (int col = 0; col < numCols; col++)
+                {
+                    this.cells[row, col] = new MyCell(row, col);
+                    this.cells[row, col].PropertyChanged += this.MyCellPropertyChanged;
+                }
+            }
+        }
 
         /// <summary>
         /// event for when a cell is changed.
@@ -129,28 +153,6 @@ namespace SpreadsheetEngine
             get
             {
                 return this.redo;
-            }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
-        /// </summary>
-        /// <param name="numRows">Number of rows for the 2d array.</param>
-        /// <param name="numCols">Number of columns for the 2d array.</param>
-        public Spreadsheet(int numRows, int numCols)
-        {
-            this.RowCount = numRows;
-            this.ColumnCount = numCols;
-
-            this.cells = new MyCell[numRows, numCols];
-
-            for (int row = 0; row < numRows; row++)
-            {
-                for (int col = 0; col < numCols; col++)
-                {
-                    this.cells[row, col] = new MyCell(row, col);
-                    this.cells[row, col].PropertyChanged += this.MyCellPropertyChanged;
-                }
             }
         }
 
@@ -221,6 +223,74 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// saves spreadsheet data to XML file.
+        /// </summary>
+        /// <param name="name">file name.</param>
+        public void SaveSpreadsheet(string name)
+        {
+            Stack<string> savedCells = new Stack<string>();
+            XmlWriter xmlWriter = XmlWriter.Create(name);
+            xmlWriter.WriteStartDocument();
+            xmlWriter.WriteStartElement("spreadsheet");
+            while (this.undo.Count != 0)
+            {
+                Command undo = this.undo.Pop();
+                int row = undo.GetRow();
+                int col = undo.GetCol();
+                string? cellName = this.CellName(row, col);
+                if (!savedCells.Contains(cellName))
+                {
+                    savedCells.Push(cellName);
+                    Cell? tempCell = this.GetCell(row, col);
+                    xmlWriter.WriteStartElement("cell");
+                    xmlWriter.WriteAttributeString("name", cellName);
+                    xmlWriter.WriteElementString("bgcolor", tempCell.BGCOlor.ToString());
+                    xmlWriter.WriteElementString("text", tempCell.CellText);
+                    xmlWriter.WriteEndElement();
+                }
+            }
+
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteEndDocument();
+            xmlWriter.Close();
+        }
+
+        /// <summary>
+        /// loads a file to the spreadsheet.
+        /// </summary>
+        /// <param name="name">file name.</param>
+        public void LoadSpreadsheet(string name)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(name);
+
+            // Find all "cell" elements
+            XmlNodeList cells = xmlDoc.SelectNodes("//cell");
+
+            // Loop through each "cell" element
+            foreach (XmlNode cell in cells)
+            {
+                // Get the "name" attribute value
+                string cellName = cell.Attributes["name"].Value;
+
+                // Get the "bgcolor" element value
+                uint bgColor = uint.Parse(cell.SelectSingleNode("bgcolor").InnerText);
+
+                // Get the "text" element value
+                string text = cell.SelectSingleNode("text").InnerText;
+                cellName = this.CellName(cellName);
+                int trow = int.Parse(cellName.Substring(1)) - 1;
+                int tcol = cellName[0] - 48;
+                Cell temp = this.GetCell(trow, tcol);
+                temp.CellText = text;
+                temp.BGCOlor = bgColor;
+            }
+
+            this.undo.Clear();
+            this.redo.Clear();
+        }
+
+        /// <summary>
         /// checks if the expression is a formula by checking if it includes operators.
         /// </summary>
         /// <param name="expression">expression entered into cell.</param>
@@ -245,41 +315,45 @@ namespace SpreadsheetEngine
         private void MyCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             MyCell? curCell = sender as MyCell;
-            string key = Convert.ToChar(curCell.ColumnIndex + 65).ToString() + (curCell.RowIndex + 1).ToString();
+            string gkey = Convert.ToChar(curCell.ColumnIndex + 65).ToString() + (curCell.RowIndex + 1).ToString();
             if (curCell.CellText != null)
             {
                 if (e.PropertyName == "CellText")
                 {
-                    if (curCell.CellText[0] == '=')
+                    if (!string.IsNullOrWhiteSpace(curCell.CellText))
                     {
-                        bool testBool = this.IsFormula(curCell.CellText);
-                        Regex alphabetRegex = new Regex("[a-zA-Z]");
-                        bool testChar = alphabetRegex.IsMatch(curCell.CellText);
-                        if (testBool)
+
+                        if (curCell.CellText[0] == '=')
                         {
-                            string equation = curCell.CellText[1..];
-                            this.AddToDict(equation, curCell);
-                            double? evaluation = this.EvaluateExpression(equation);
-                            curCell.CellValue = evaluation.ToString();
-                        }
-                        else if (testChar)
-                        {
-                            char columnLetter = curCell.CellText[1];
-                            int column = (int)columnLetter - 65;
-                            string sRow = curCell.CellText.Substring(2);
-                            int row = int.Parse(sRow) - 1;
-                            string cell = (columnLetter + sRow).ToString();
-                            this.AddToDict(cell, curCell);
-                            curCell.CellValue = this.cells[row, column].CellValue;
+                            bool testBool = this.IsFormula(curCell.CellText);
+                            Regex alphabetRegex = new Regex("[a-zA-Z]");
+                            bool testChar = alphabetRegex.IsMatch(curCell.CellText);
+                            if (testBool)
+                            {
+                                string equation = curCell.CellText[1..];
+                                this.AddToDict(equation, curCell);
+                                double? evaluation = this.EvaluateExpression(equation);
+                                curCell.CellValue = evaluation.ToString();
+                            }
+                            else if (testChar)
+                            {
+                                char columnLetter = curCell.CellText[1];
+                                int column = (int)columnLetter - 65;
+                                string sRow = curCell.CellText.Substring(2);
+                                int row = int.Parse(sRow) - 1;
+                                string cell = (columnLetter + sRow).ToString();
+                                this.AddToDict(cell, curCell);
+                                curCell.CellValue = this.cells[row, column].CellValue;
+                            }
+                            else
+                            {
+                                curCell.CellValue = curCell.CellText.Substring(1);
+                            }
                         }
                         else
                         {
-                            curCell.CellValue = curCell.CellText.Substring(1);
+                            curCell.CellValue = curCell.CellText;
                         }
-                    }
-                    else
-                    {
-                        curCell.CellValue = curCell.CellText;
                     }
                 }
             }
@@ -295,12 +369,12 @@ namespace SpreadsheetEngine
                 this.CellPropertyChanged(sender, e);
             }
 
-            if (curCell.CellValue != null)
+            if (curCell.CellValue != null && curCell.CellValue != string.Empty)
             {
-                this.variables[key] = double.Parse(curCell.CellValue);
+                this.variables[gkey] = double.Parse(curCell.CellValue);
             }
 
-            if (this.referencedCells.ContainsKey(key))
+            foreach (string key in this.referencedCells.Keys)
             {
                 for (int i = 0; i < this.referencedCells[key].Count; i++)
                 {
@@ -312,6 +386,11 @@ namespace SpreadsheetEngine
                     string col = column.ToString();
                     string rows = row.ToString();
                     this.changedCells.Add(col + rows);
+                    string tempKey = this.CellName(row, column);
+                    if (this.cells[row, column].CellValue != string.Empty)
+                    {
+                        this.variables[tempKey] = double.Parse(this.cells[row, column].CellValue);
+                    }
                 }
             }
         }
@@ -359,7 +438,7 @@ namespace SpreadsheetEngine
                 bool isLetter = char.IsLetter(sExpression[i][0]);
                 if (isLetter)
                 {
-                    string cell = (Convert.ToChar(curCell.ColumnIndex + 65).ToString() + (curCell.RowIndex + 1)).ToString();
+                    string cell = this.CellName(curCell.RowIndex, curCell.ColumnIndex);
                     if (!this.referencedCells.ContainsKey(sExpression[i]))
                     {
                         holder.Add(cell);
@@ -371,6 +450,30 @@ namespace SpreadsheetEngine
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Converts to the letter number cell name.
+        /// </summary>
+        /// <param name="row">row.</param>
+        /// <param name="col">columns.</param>
+        /// <returns>cell. ex. A1.</returns>
+        private string CellName(int row, int col)
+        {
+            return Convert.ToChar(col + 65).ToString() + (row + 1).ToString();
+        }
+
+        /// <summary>
+        /// returns the cell in form letter and numbers.
+        /// </summary>
+        /// <param name="cellName">row col cell values.</param>
+        /// <returns>ex"A1".</returns>
+        private string CellName(string cellName)
+        {
+            string name;
+            name = (cellName[0] - 'A').ToString();
+            name += cellName.Substring(1);
+            return name;
         }
 
         /// <summary>

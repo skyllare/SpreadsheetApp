@@ -36,6 +36,22 @@ namespace Spreadsheet_Skyllar_Estill
         }
 
         /// <summary>
+        /// changes values of all cells that are reference another cell.
+        /// </summary>
+        private void ChangeReferencedCells()
+        {
+            for (int i = 0; i < this.spreadsheet.ChangedCells.Count; i++)
+            {
+                int col = int.Parse(this.spreadsheet.ChangedCells[i].Substring(0, 1));
+                int row = int.Parse(this.spreadsheet.ChangedCells[i].Substring(1));
+                Cell editedCell = this.spreadsheet.GetCell(row, col);
+                this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
+            }
+
+            this.spreadsheet.ChangedCells.Clear();
+        }
+
+        /// <summary>
         /// runs when the form runs.
         /// </summary>
         /// <param name="sender">reference to object that raise event.</param>
@@ -141,10 +157,11 @@ namespace Spreadsheet_Skyllar_Estill
             {
                 text = string.Empty;
             }
+
             this.spreadsheet.AddUndoText(editedCell.CellText, text, row, col);
             editedCell.CellText = text;
             this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
-            ChangeReferencedCells();
+            this.ChangeReferencedCells();
         }
 
         /// <summary>
@@ -171,6 +188,8 @@ namespace Spreadsheet_Skyllar_Estill
                     Color color = Color.FromArgb((int)colorValue);
                     this.dataGridView1.Rows[row].Cells[col].Style.BackColor = color;
                 }
+
+                this.ChangeReferencedCells();
             }
         }
 
@@ -194,7 +213,6 @@ namespace Spreadsheet_Skyllar_Estill
                     this.spreadsheet.AddUndoColor(iColor, editedCell.BGCOlor, cell.RowIndex, cell.ColumnIndex);
                     editedCell.BGCOlor = iColor;
                 }
-                
             }
         }
 
@@ -209,7 +227,7 @@ namespace Spreadsheet_Skyllar_Estill
             {
                 Command redo = this.spreadsheet.GetRedo();
                 redo.Execute(this.spreadsheet);
-                ChangeReferencedCells();
+                this.ChangeReferencedCells();
             }
         }
 
@@ -224,23 +242,8 @@ namespace Spreadsheet_Skyllar_Estill
             {
                 Command undo = this.spreadsheet.GetUndo();
                 undo.Unexecute(this.spreadsheet);
-                ChangeReferencedCells();
+                this.ChangeReferencedCells();
             }
-        }
-
-        /// <summary>
-        /// changes values of all cells that are reference another cell.
-        /// </summary>
-        public void ChangeReferencedCells()
-        {
-            for (int i = 0; i < this.spreadsheet.ChangedCells.Count; i++)
-            {
-                int col = int.Parse(this.spreadsheet.ChangedCells[i].Substring(0, 1));
-                int row = int.Parse(this.spreadsheet.ChangedCells[i].Substring(1));
-                Cell editedCell = this.spreadsheet.GetCell(row, col);
-                this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
-            }
-            this.spreadsheet.ChangedCells.Clear();
         }
 
         /// <summary>
@@ -273,7 +276,7 @@ namespace Spreadsheet_Skyllar_Estill
                 if (this.spreadsheet.Undo.Count == 0)
                 {
                     this.undoToolStripMenuItem.Enabled = false;
-                    this.redoToolStripMenuItem.Text = "Undo";
+                    this.undoToolStripMenuItem.Text = "Undo";
                 }
                 else
                 {
@@ -286,6 +289,67 @@ namespace Spreadsheet_Skyllar_Estill
                     {
                         this.undoToolStripMenuItem.Text = "Undo text change";
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// save item click.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Filter = "*.xml|";
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show("Saving to " + dialog.FileName);
+                }
+
+                if (this.spreadsheet != null)
+                {
+                    this.spreadsheet.SaveSpreadsheet(dialog.FileName);
+                }
+            }
+        }
+
+        /// <summary>
+        /// click on load.
+        /// </summary>
+        /// <param name="sender">The cell being modified.</param>
+        /// <param name="e">The property being modified.</param>
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.ClearSpreadsheetData();
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Filter = "*.xml|";
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show(dialog.FileName);
+                }
+
+                if (this.spreadsheet != null)
+                {
+                    this.spreadsheet.LoadSpreadsheet(dialog.FileName);
+                }
+            }
+        }
+
+        /// <summary>
+        /// clears value and colors from cell.
+        /// </summary>
+        private void ClearSpreadsheetData()
+        {
+            for (int row = 0; row < this.dataGridView1.Rows.Count; row++)
+            {
+                for (int col = 0; col < this.dataGridView1.Columns.Count; col++)
+                {
+                    DataGridViewCell cell = this.dataGridView1.Rows[row].Cells[col];
+                    cell.Value = null;
+                    cell.Style.BackColor = Color.White;
                 }
             }
         }

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<spreadsheet>
+	<cell unusedattr="abc" name="A1">
+		<text>6</text>
+		<some_tag_you_didnt_write>blah</some_tag_you_didnt_write>
+		<bgcolor>4294902015</bgcolor>
+		<another_unused_tag>data</another_unused_tag>
+	</cell>
+</spreadsheet>

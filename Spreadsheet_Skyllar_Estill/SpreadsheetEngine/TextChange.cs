@@ -32,7 +32,7 @@ namespace SpreadsheetEngine
 
         /// <summary>
         /// cell's column.
-        /// <summary>
+        /// </summary>
         private int col;
 
         /// <summary>
