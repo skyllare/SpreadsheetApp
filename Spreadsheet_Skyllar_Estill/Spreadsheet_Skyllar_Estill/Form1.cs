@@ -311,6 +311,7 @@ namespace Spreadsheet_Skyllar_Estill
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ClearSpreadsheetData();
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Filter = "*.xml|";
@@ -327,5 +328,19 @@ namespace Spreadsheet_Skyllar_Estill
             }
 
         }
+
+        private void ClearSpreadsheetData()
+        {
+            for (int row = 0; row < dataGridView1.Rows.Count; row++)
+            {
+                for (int col = 0; col < dataGridView1.Columns.Count; col++)
+                {
+                    DataGridViewCell cell = dataGridView1.Rows[row].Cells[col];
+                    cell.Value = null; // clear cell content
+                    cell.Style.BackColor = Color.White;
+                }
+            }
+        }
+
     }
 }
