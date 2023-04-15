@@ -86,11 +86,15 @@ namespace SpreadsheetTesting
 
         /// <summary>
         /// Tests if the data from the XML file is added to the spreadsheet properly.
+        /// testFile1 tests that that a value that references another cell is properly set.
+        /// testFile2 tests a general cell value.
+        /// testFile3 tests a file with tags that should be ignored.
         /// </summary>
         /// <param name="filePath">xml file path.</param>
         /// <param name="value">expected value.</param>
         [TestCase("C:\\Users\\skyll\\OneDrive\\Desktop\\Code\\cpts321-hws\\Spreadsheet_Skyllar_Estill\\SpreadsheetTesting\\testFile2.xml", "22")]
         [TestCase("C:\\Users\\skyll\\OneDrive\\Desktop\\Code\\cpts321-hws\\Spreadsheet_Skyllar_Estill\\SpreadsheetTesting\\testFile1.xml", "22")]
+        [TestCase("C:\\Users\\skyll\\OneDrive\\Desktop\\Code\\cpts321-hws\\Spreadsheet_Skyllar_Estill\\SpreadsheetTesting\\testFile3.xml", "6")]
         public void TestXMLFile(string filePath, string value)
         {
             string fileName = filePath;
