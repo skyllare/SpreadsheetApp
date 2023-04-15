@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SpreadsheetEngine
 {
+    /// <summary>
+    /// interface class for undo and redo.
+    /// </summary>
     public interface Command
     {
         /// <summary>

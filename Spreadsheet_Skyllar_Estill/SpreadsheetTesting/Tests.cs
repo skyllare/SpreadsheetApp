@@ -2,10 +2,10 @@
 // Copyright (c) Skyllar Estil. All rights reserved.
 // </copyright>
 
-using SpreadsheetEngine;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Xml;
+using SpreadsheetEngine;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace SpreadsheetTesting
@@ -84,8 +84,13 @@ namespace SpreadsheetTesting
             Assert.That(undo.GetRow, Is.EqualTo(1));
         }
 
-        [TestCase ("C:\\Users\\skyll\\OneDrive\\Desktop\\Code\\cpts321-hws\\Spreadsheet_Skyllar_Estill\\SpreadsheetTesting\\testFile2.xml", "22")]
-        [TestCase ("C:\\Users\\skyll\\OneDrive\\Desktop\\Code\\cpts321-hws\\Spreadsheet_Skyllar_Estill\\SpreadsheetTesting\\testFile1.xml", "22")]
+        /// <summary>
+        /// Tests if the data from the XML file is added to the spreadsheet properly.
+        /// </summary>
+        /// <param name="filePath">xml file path.</param>
+        /// <param name="value">expected value.</param>
+        [TestCase("C:\\Users\\skyll\\OneDrive\\Desktop\\Code\\cpts321-hws\\Spreadsheet_Skyllar_Estill\\SpreadsheetTesting\\testFile2.xml", "22")]
+        [TestCase("C:\\Users\\skyll\\OneDrive\\Desktop\\Code\\cpts321-hws\\Spreadsheet_Skyllar_Estill\\SpreadsheetTesting\\testFile1.xml", "22")]
         public void TestXMLFile(string filePath, string value)
         {
             string fileName = filePath;
@@ -93,7 +98,6 @@ namespace SpreadsheetTesting
             xmlDoc.Load(fileName);
             this.spreadsheet.LoadSpreadsheet(fileName);
             Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo(value));
-
         }
     }
 }

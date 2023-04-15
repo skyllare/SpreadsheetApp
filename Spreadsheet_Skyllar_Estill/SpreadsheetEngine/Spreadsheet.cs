@@ -71,6 +71,28 @@ namespace SpreadsheetEngine
         /// </summary>
         private int columnCount;
 
+         /// <summary>
+        /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
+        /// </summary>
+        /// <param name="numRows">Number of rows for the 2d array.</param>
+        /// <param name="numCols">Number of columns for the 2d array.</param>
+        public Spreadsheet(int numRows, int numCols)
+        {
+            this.RowCount = numRows;
+            this.ColumnCount = numCols;
+
+            this.cells = new MyCell[numRows, numCols];
+
+            for (int row = 0; row < numRows; row++)
+            {
+                for (int col = 0; col < numCols; col++)
+                {
+                    this.cells[row, col] = new MyCell(row, col);
+                    this.cells[row, col].PropertyChanged += this.MyCellPropertyChanged;
+                }
+            }
+        }
+
         /// <summary>
         /// event for when a cell is changed.
         /// </summary>
@@ -131,28 +153,6 @@ namespace SpreadsheetEngine
             get
             {
                 return this.redo;
-            }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
-        /// </summary>
-        /// <param name="numRows">Number of rows for the 2d array.</param>
-        /// <param name="numCols">Number of columns for the 2d array.</param>
-        public Spreadsheet(int numRows, int numCols)
-        {
-            this.RowCount = numRows;
-            this.ColumnCount = numCols;
-
-            this.cells = new MyCell[numRows, numCols];
-
-            for (int row = 0; row < numRows; row++)
-            {
-                for (int col = 0; col < numCols; col++)
-                {
-                    this.cells[row, col] = new MyCell(row, col);
-                    this.cells[row, col].PropertyChanged += this.MyCellPropertyChanged;
-                }
             }
         }
 
@@ -220,6 +220,74 @@ namespace SpreadsheetEngine
             }
 
             return this.cells[numRow, numCol];
+        }
+
+        /// <summary>
+        /// saves spreadsheet data to XML file.
+        /// </summary>
+        /// <param name="name">file name.</param>
+        public void SaveSpreadsheet(string name)
+        {
+            Stack<string> savedCells = new Stack<string>();
+            XmlWriter xmlWriter = XmlWriter.Create(name);
+            xmlWriter.WriteStartDocument();
+            xmlWriter.WriteStartElement("spreadsheet");
+            while (this.undo.Count != 0)
+            {
+                Command undo = this.undo.Pop();
+                int row = undo.GetRow();
+                int col = undo.GetCol();
+                string? cellName = this.CellName(row, col);
+                if (!savedCells.Contains(cellName))
+                {
+                    savedCells.Push(cellName);
+                    Cell? tempCell = this.GetCell(row, col);
+                    xmlWriter.WriteStartElement("cell");
+                    xmlWriter.WriteAttributeString("name", cellName);
+                    xmlWriter.WriteElementString("bgcolor", tempCell.BGCOlor.ToString());
+                    xmlWriter.WriteElementString("text", tempCell.CellText);
+                    xmlWriter.WriteEndElement();
+                }
+            }
+
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteEndDocument();
+            xmlWriter.Close();
+        }
+
+        /// <summary>
+        /// loads a file to the spreadsheet.
+        /// </summary>
+        /// <param name="name">file name.</param>
+        public void LoadSpreadsheet(string name)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(name);
+
+            // Find all "cell" elements
+            XmlNodeList cells = xmlDoc.SelectNodes("//cell");
+
+            // Loop through each "cell" element
+            foreach (XmlNode cell in cells)
+            {
+                // Get the "name" attribute value
+                string cellName = cell.Attributes["name"].Value;
+
+                // Get the "bgcolor" element value
+                uint bgColor = uint.Parse(cell.SelectSingleNode("bgcolor").InnerText);
+
+                // Get the "text" element value
+                string text = cell.SelectSingleNode("text").InnerText;
+                cellName = this.CellName(cellName);
+                int trow = int.Parse(cellName.Substring(1)) - 1;
+                int tcol = cellName[0] - 48;
+                Cell temp = this.GetCell(trow, tcol);
+                temp.CellText = text;
+                temp.BGCOlor = bgColor;
+            }
+
+            this.undo.Clear();
+            this.redo.Clear();
         }
 
         /// <summary>
@@ -319,10 +387,6 @@ namespace SpreadsheetEngine
                     {
                         this.variables[tempKey] = double.Parse(this.cells[row, column].CellValue);
                     }
-                    else
-                    {
-                        //this.variables[tempKey] = null;
-                    }
                 }
             }
         }
@@ -385,67 +449,7 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
-        /// saves spreadsheet data to XML file.
-        /// </summary>
-        public void SaveSpreadsheet(string name)
-        {
-            Stack<string> savedCells = new Stack<string>();
-            XmlWriter xmlWriter = XmlWriter.Create(name);
-            xmlWriter.WriteStartDocument();
-            xmlWriter.WriteStartElement("spreadsheet");
-            while (this.undo.Count != 0)
-            {
-                Command undo = this.undo.Pop();
-                int row = undo.GetRow();
-                int col = undo.GetCol();
-                string? cellName = this.CellName(row, col);
-                if (!savedCells.Contains(cellName))
-                {
-                    savedCells.Push(cellName);
-                    Cell? tempCell = this.GetCell(row, col);
-                    xmlWriter.WriteStartElement("cell");
-                    xmlWriter.WriteAttributeString("name", cellName);
-                    xmlWriter.WriteElementString("bgcolor", tempCell.BGCOlor.ToString());
-                    xmlWriter.WriteElementString("text", tempCell.CellText);
-                    xmlWriter.WriteEndElement();
-                }
-            }
-
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteEndDocument();
-            xmlWriter.Close();
-        }
-
-        public void LoadSpreadsheet(string name)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(name);
-
-            // Find all "cell" elements
-            XmlNodeList cells = xmlDoc.SelectNodes("//cell");
-
-            // Loop through each "cell" element
-            foreach (XmlNode cell in cells)
-            {
-                // Get the "name" attribute value
-                string cellName = cell.Attributes["name"].Value;
-                // Get the "bgcolor" element value
-                uint bgColor = uint.Parse(cell.SelectSingleNode("bgcolor").InnerText);
-                // Get the "text" element value
-                string text = cell.SelectSingleNode("text").InnerText;
-                cellName = CellName(cellName);
-                int trow = int.Parse(cellName.Substring(1))-1;
-                int tcol = cellName[0] - 48;
-                Cell temp = GetCell(trow, tcol);
-                temp.CellText = text;
-                temp.BGCOlor = bgColor;
-            }
-            this.undo.Clear();
-            this.redo.Clear();
-        }
-
-        /// <summary>
-        /// Converts to the letter number cell name
+        /// Converts to the letter number cell name.
         /// </summary>
         /// <param name="row">row.</param>
         /// <param name="col">columns.</param>
@@ -455,6 +459,11 @@ namespace SpreadsheetEngine
             return Convert.ToChar(col + 65).ToString() + (row + 1).ToString();
         }
 
+        /// <summary>
+        /// returns the cell in form letter and numbers.
+        /// </summary>
+        /// <param name="cellName">row col cell values.</param>
+        /// <returns>ex"A1".</returns>
         private string CellName(string cellName)
         {
             string name;
@@ -462,6 +471,7 @@ namespace SpreadsheetEngine
             name += cellName.Substring(1);
             return name;
         }
+
         /// <summary>
         /// Concrete class to make Cell methods accessible for the spreadsheet class.
         /// </summary>
