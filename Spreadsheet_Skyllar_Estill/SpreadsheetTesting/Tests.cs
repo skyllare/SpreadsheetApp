@@ -4,6 +4,8 @@
 
 using SpreadsheetEngine;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Xml;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace SpreadsheetTesting
@@ -67,18 +69,31 @@ namespace SpreadsheetTesting
         public void TestNullCells()
         {
             this.spreadsheet.GetCell(0, 0).CellText = "=C4";
-            Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo(null));
+            Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo(string.Empty));
         }
 
         /// <summary>
         /// Tests that undo has the proper cell.
         /// </summary>
+        [Test]
         public void TestUndo()
         {
             this.spreadsheet.AddUndoText(null, null, 1, 0);
             Command undo = this.spreadsheet.GetUndo();
             Assert.That(undo.GetCol, Is.EqualTo(0));
             Assert.That(undo.GetRow, Is.EqualTo(1));
+        }
+
+        [TestCase ("C:\\Users\\skyll\\OneDrive\\Desktop\\Code\\cpts321-hws\\Spreadsheet_Skyllar_Estill\\SpreadsheetTesting\\testFile2.xml", "22")]
+        [TestCase ("C:\\Users\\skyll\\OneDrive\\Desktop\\Code\\cpts321-hws\\Spreadsheet_Skyllar_Estill\\SpreadsheetTesting\\testFile1.xml", "22")]
+        public void TestXMLFile(string filePath, string value)
+        {
+            string fileName = filePath;
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(fileName);
+            this.spreadsheet.LoadSpreadsheet(fileName);
+            Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo(value));
+
         }
     }
 }

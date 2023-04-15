@@ -440,6 +440,8 @@ namespace SpreadsheetEngine
                 temp.CellText = text;
                 temp.BGCOlor = bgColor;
             }
+            this.undo.Clear();
+            this.redo.Clear();
         }
 
         /// <summary>
