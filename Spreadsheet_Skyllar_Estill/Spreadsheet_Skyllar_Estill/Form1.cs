@@ -172,6 +172,7 @@ namespace Spreadsheet_Skyllar_Estill
                     this.dataGridView1.Rows[row].Cells[col].Style.BackColor = color;
                     //variables.
                 }
+                ChangeReferencedCells();
             }
         }
 
