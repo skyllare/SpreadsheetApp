@@ -320,36 +320,40 @@ namespace SpreadsheetEngine
             {
                 if (e.PropertyName == "CellText")
                 {
-                    if (curCell.CellText[0] == '=')
+                    if (!string.IsNullOrWhiteSpace(curCell.CellText))
                     {
-                        bool testBool = this.IsFormula(curCell.CellText);
-                        Regex alphabetRegex = new Regex("[a-zA-Z]");
-                        bool testChar = alphabetRegex.IsMatch(curCell.CellText);
-                        if (testBool)
+
+                        if (curCell.CellText[0] == '=')
                         {
-                            string equation = curCell.CellText[1..];
-                            this.AddToDict(equation, curCell);
-                            double? evaluation = this.EvaluateExpression(equation);
-                            curCell.CellValue = evaluation.ToString();
-                        }
-                        else if (testChar)
-                        {
-                            char columnLetter = curCell.CellText[1];
-                            int column = (int)columnLetter - 65;
-                            string sRow = curCell.CellText.Substring(2);
-                            int row = int.Parse(sRow) - 1;
-                            string cell = (columnLetter + sRow).ToString();
-                            this.AddToDict(cell, curCell);
-                            curCell.CellValue = this.cells[row, column].CellValue;
+                            bool testBool = this.IsFormula(curCell.CellText);
+                            Regex alphabetRegex = new Regex("[a-zA-Z]");
+                            bool testChar = alphabetRegex.IsMatch(curCell.CellText);
+                            if (testBool)
+                            {
+                                string equation = curCell.CellText[1..];
+                                this.AddToDict(equation, curCell);
+                                double? evaluation = this.EvaluateExpression(equation);
+                                curCell.CellValue = evaluation.ToString();
+                            }
+                            else if (testChar)
+                            {
+                                char columnLetter = curCell.CellText[1];
+                                int column = (int)columnLetter - 65;
+                                string sRow = curCell.CellText.Substring(2);
+                                int row = int.Parse(sRow) - 1;
+                                string cell = (columnLetter + sRow).ToString();
+                                this.AddToDict(cell, curCell);
+                                curCell.CellValue = this.cells[row, column].CellValue;
+                            }
+                            else
+                            {
+                                curCell.CellValue = curCell.CellText.Substring(1);
+                            }
                         }
                         else
                         {
-                            curCell.CellValue = curCell.CellText.Substring(1);
+                            curCell.CellValue = curCell.CellText;
                         }
-                    }
-                    else
-                    {
-                        curCell.CellValue = curCell.CellText;
                     }
                 }
             }
