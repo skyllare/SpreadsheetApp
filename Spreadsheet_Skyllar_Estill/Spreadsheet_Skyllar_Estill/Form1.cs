@@ -318,8 +318,11 @@ namespace Spreadsheet_Skyllar_Estill
                     MessageBox.Show(dialog.FileName);
                 }
 
-                System.IO.TextReader readFile = new StreamReader(dialog.FileName);
- 
+
+                if (this.spreadsheet != null)
+                {
+                    this.spreadsheet.LoadSpreadsheet(dialog.FileName);
+                }
             }
 
         }

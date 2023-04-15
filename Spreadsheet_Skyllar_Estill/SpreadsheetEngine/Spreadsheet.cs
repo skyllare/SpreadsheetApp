@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Data.Common;
 using System.Drawing;
 using System.IO;
@@ -296,7 +297,7 @@ namespace SpreadsheetEngine
                 this.CellPropertyChanged(sender, e);
             }
 
-            if (curCell.CellValue != null)
+            if (curCell.CellValue != null && curCell.CellValue != string.Empty)
             {
                 this.variables[gkey] = double.Parse(curCell.CellValue);
             }
@@ -314,7 +315,14 @@ namespace SpreadsheetEngine
                     string rows = row.ToString();
                     this.changedCells.Add(col + rows);
                     string tempKey = this.CellName(row, column);
-                    this.variables[tempKey] = double.Parse(this.cells[row, column].CellValue);
+                    if (this.cells[row, column].CellValue != string.Empty)
+                    {
+                        this.variables[tempKey] = double.Parse(this.cells[row, column].CellValue);
+                    }
+                    else
+                    {
+                        //this.variables[tempKey] = null;
+                    }
                 }
             }
         }
@@ -362,7 +370,7 @@ namespace SpreadsheetEngine
                 bool isLetter = char.IsLetter(sExpression[i][0]);
                 if (isLetter)
                 {
-                    string cell = (Convert.ToChar(curCell.ColumnIndex + 65).ToString() + (curCell.RowIndex + 1)).ToString();
+                    string cell = this.CellName(curCell.RowIndex, curCell.ColumnIndex);
                     if (!this.referencedCells.ContainsKey(sExpression[i]))
                     {
                         holder.Add(cell);
@@ -387,7 +395,6 @@ namespace SpreadsheetEngine
             xmlWriter.WriteStartElement("spreadsheet");
             while (this.undo.Count != 0)
             {
-                //get rid of duplicates
                 Command undo = this.undo.Pop();
                 int row = undo.GetRow();
                 int col = undo.GetCol();
@@ -409,14 +416,49 @@ namespace SpreadsheetEngine
             xmlWriter.Close();
         }
 
-        public void LoadSpreadsheet()
+        public void LoadSpreadsheet(string name)
         {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(name);
 
+            // Find all "cell" elements
+            XmlNodeList cells = xmlDoc.SelectNodes("//cell");
+
+            // Loop through each "cell" element
+            foreach (XmlNode cell in cells)
+            {
+                // Get the "name" attribute value
+                string cellName = cell.Attributes["name"].Value;
+                // Get the "bgcolor" element value
+                uint bgColor = uint.Parse(cell.SelectSingleNode("bgcolor").InnerText);
+                // Get the "text" element value
+                string text = cell.SelectSingleNode("text").InnerText;
+                cellName = CellName(cellName);
+                int trow = int.Parse(cellName.Substring(1))-1;
+                int tcol = cellName[0] - 48;
+                Cell temp = GetCell(trow, tcol);
+                temp.CellText = text;
+                temp.BGCOlor = bgColor;
+            }
         }
 
+        /// <summary>
+        /// Converts to the letter number cell name
+        /// </summary>
+        /// <param name="row">row.</param>
+        /// <param name="col">columns.</param>
+        /// <returns>cell. ex. A1.</returns>
         private string CellName(int row, int col)
         {
             return Convert.ToChar(col + 65).ToString() + (row + 1).ToString();
+        }
+
+        private string CellName(string cellName)
+        {
+            string name;
+            name = (cellName[0] - 'A').ToString();
+            name += cellName.Substring(1);
+            return name;
         }
         /// <summary>
         /// Concrete class to make Cell methods accessible for the spreadsheet class.
