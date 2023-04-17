@@ -105,9 +105,12 @@ namespace SpreadsheetTesting
         }
 
         /// <summary>
-        /// Tests for cells that don't exsist
+        /// Tests for cells that don't exsist.
+        /// test 1 tests for reference to a row one more than in the spreadsheet.
+        /// test 2 tests for multiple letter references.
+        /// test 3 tests for columns that are not in the spreadsheet.
         /// </summary>
-        /// <param name="cell"></param>
+        /// <param name="cell">cell text.</param>
         [TestCase("=A11")]
         [TestCase("=AA1")]
         [TestCase("=Z1")]
