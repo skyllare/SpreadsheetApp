@@ -8,6 +8,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -308,6 +309,59 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// solves a formula from the spreadsheet and save the cell's value to
+        /// the evaluation.
+        /// </summary>
+        /// <param name="formula">the formula.</param>
+        /// <param name="cell">current cell.</param>
+        private void SolveFormula(string formula, MyCell? cell)
+        {
+            if (cell != null)
+            {
+                this.AddToDict(formula, cell);
+                double? evaluation = this.EvaluateExpression(formula);
+                if (evaluation != null)
+                {
+                    cell.CellValue = evaluation.ToString();
+                }
+            }
+        }
+
+        /// <summary>
+        /// checks if the cell text contains 1 letter.
+        /// if it contains more than one, it is referencing a cell
+        /// that doesn't exsist in the spreadsheet.
+        /// </summary>
+        /// <param name="text">cell text.</param>
+        /// <returns>true if contains 1 letter.</returns>
+        private bool IsCellReference(string text)
+        {
+            int value = text.Count(char.IsLetter);
+            if (value == 1)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// sets the value of the cell to the cell that it is referencing.
+        /// </summary>
+        /// <param name="row">row of referenced cell.</param>
+        /// <param name="col">column of referenced cell..</param>
+        /// <param name="cell">current cell being edited.</param>
+        private void SolveCellReference(int row, int col, MyCell? curCell)
+        {
+            if (curCell != null)
+            {
+                string cell = this.CellName(row, col);
+                this.AddToDict(cell, curCell);
+                curCell.CellValue = this.cells[row, col].CellValue;
+            }
+        }
+
+        /// <summary>
         /// Event handler for when a cell is changed.
         /// </summary>
         /// <param name="sender">The cell being modified.</param>
@@ -315,35 +369,26 @@ namespace SpreadsheetEngine
         private void MyCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             MyCell? curCell = sender as MyCell;
-            string gkey = Convert.ToChar(curCell.ColumnIndex + 65).ToString() + (curCell.RowIndex + 1).ToString();
+            string gkey = this.MakeKey(curCell.RowIndex, curCell.ColumnIndex);
             if (curCell.CellText != null)
             {
                 if (e.PropertyName == "CellText")
                 {
                     if (!string.IsNullOrWhiteSpace(curCell.CellText))
                     {
-
                         if (curCell.CellText[0] == '=')
                         {
                             bool testBool = this.IsFormula(curCell.CellText);
-                            Regex alphabetRegex = new Regex("[a-zA-Z]");
-                            bool testChar = alphabetRegex.IsMatch(curCell.CellText);
+                            bool testChar = this.IsCellReference(curCell.CellText);
                             if (testBool)
                             {
-                                string equation = curCell.CellText[1..];
-                                this.AddToDict(equation, curCell);
-                                double? evaluation = this.EvaluateExpression(equation);
-                                curCell.CellValue = evaluation.ToString();
+                                this.SolveFormula(curCell.CellText[1..], curCell);
                             }
                             else if (testChar)
                             {
-                                char columnLetter = curCell.CellText[1];
-                                int column = (int)columnLetter - 65;
-                                string sRow = curCell.CellText.Substring(2);
-                                int row = int.Parse(sRow) - 1;
-                                string cell = (columnLetter + sRow).ToString();
-                                this.AddToDict(cell, curCell);
-                                curCell.CellValue = this.cells[row, column].CellValue;
+                                int column = this.LetterToNumber(curCell.CellText[1]);
+                                int row = this.StringToInt(curCell.CellText.Substring(2));
+                                this.SolveCellReference(row, column, curCell);
                             }
                             else
                             {
@@ -374,25 +419,7 @@ namespace SpreadsheetEngine
                 this.variables[gkey] = double.Parse(curCell.CellValue);
             }
 
-            foreach (string key in this.referencedCells.Keys)
-            {
-                for (int i = 0; i < this.referencedCells[key].Count; i++)
-                {
-                    int column = 0, row = 0;
-                    this.GetRowCol(ref row, ref column, key, i);
-                    string equation = this.cells[row, column].CellText;
-                    double? evaluation = this.EvaluateExpression(equation);
-                    this.cells[row, column].CellValue = evaluation.ToString();
-                    string col = column.ToString();
-                    string rows = row.ToString();
-                    this.changedCells.Add(col + rows);
-                    string tempKey = this.CellName(row, column);
-                    if (this.cells[row, column].CellValue != string.Empty)
-                    {
-                        this.variables[tempKey] = double.Parse(this.cells[row, column].CellValue);
-                    }
-                }
-            }
+            this.ChangeReferenceValues();
         }
 
         /// <summary>
@@ -409,6 +436,35 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// changes the values of the cells that reference another cell.
+        /// </summary>
+        private void ChangeReferenceValues()
+        {
+            foreach (string key in this.referencedCells.Keys)
+            {
+                for (int i = 0; i < this.referencedCells[key].Count; i++)
+                {
+                    int column = 0, row = 0;
+                    this.GetRowCol(ref row, ref column, key, i);
+                    string equation = this.cells[row, column].CellText;
+                    double? evaluation = this.EvaluateExpression(equation);
+                    if (evaluation != null)
+                    {
+                        this.cells[row, column].CellValue = evaluation.ToString();
+                    }
+
+                    string colRow = this.MakeKey(row, column);
+                    this.changedCells.Add(colRow);
+                    string tempKey = this.CellName(row, column);
+                    if (this.cells[row, column].CellValue != string.Empty)
+                    {
+                        this.variables[tempKey] = double.Parse(this.cells[row, column].CellValue);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// returns the row and column of the referencedCell values.
         /// </summary>
         /// <param name="row">row int.</param>
@@ -421,6 +477,41 @@ namespace SpreadsheetEngine
             col = (int)columnLetter - 65;
             string sRow = this.referencedCells[key][i].Substring(1);
             row = int.Parse(sRow) - 1;
+        }
+
+        /// <summary>
+        /// takes row and column value and returns a key for the variables dictionary.
+        /// </summary>
+        /// <param name="row">row.</param>
+        /// <param name="col">column.</param>
+        /// <returns>key.</returns>
+        private string MakeKey(int row, int col)
+        {
+            string column = Convert.ToChar(col + 65).ToString();
+            string rows = (row + 1).ToString();
+            return column + rows;
+        }
+
+        /// <summary>
+        /// converts a letter value to it's number value.
+        /// </summary>
+        /// <param name="letter">the letter.</param>
+        /// <returns>number value.</returns>
+        private int LetterToNumber(char letter)
+        {
+            int column = (int)letter - 65;
+            return column;
+        }
+
+        /// <summary>
+        /// takes a string of numbers and returns them as an int.
+        /// </summary>
+        /// <param name="number">number string.</param>
+        /// <returns>numbers as int.</returns>
+        private int StringToInt(string number)
+        {
+            int result = 0;
+            return result;
         }
 
         /// <summary>
