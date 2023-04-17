@@ -103,5 +103,15 @@ namespace SpreadsheetTesting
             this.spreadsheet.LoadSpreadsheet(fileName);
             Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo(value));
         }
+
+
+        [TestCase("=A11")]
+        [TestCase("=ZZ1")]
+        public void CellOutOfContext(string cell)
+        {
+            this.spreadsheet.GetCell(0, 0).CellText = cell;
+            Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo("!(bad reference)"));
+        }
+
     }
 }

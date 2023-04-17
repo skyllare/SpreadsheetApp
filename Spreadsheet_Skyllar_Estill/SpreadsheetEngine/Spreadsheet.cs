@@ -314,16 +314,18 @@ namespace SpreadsheetEngine
         /// </summary>
         /// <param name="formula">the formula.</param>
         /// <param name="cell">current cell.</param>
-        private void SolveFormula(string formula, MyCell? cell)
+        private void SolveFormula(string formula, MyCell? curCell)
         {
-            if (cell != null)
+            if (curCell != null)
             {
-                this.AddToDict(formula, cell);
+                this.AddToRefDict(formula, curCell);
                 double? evaluation = this.EvaluateExpression(formula);
                 if (evaluation != null)
                 {
-                    cell.CellValue = evaluation.ToString();
+                    curCell.CellValue = evaluation.ToString();
                 }
+
+                this.AddToVarDict(curCell);
             }
         }
 
@@ -339,6 +341,12 @@ namespace SpreadsheetEngine
             int value = text.Count(char.IsLetter);
             if (value == 1)
             {
+                int row = int.Parse(text.Substring(2));
+                if (row < 0 || row > this.rowCount)
+                {
+                    return false;
+                }
+
                 return true;
             }
 
@@ -356,8 +364,9 @@ namespace SpreadsheetEngine
             if (curCell != null)
             {
                 string cell = this.CellName(row, col);
-                this.AddToDict(cell, curCell);
+                this.AddToRefDict(cell, curCell);
                 curCell.CellValue = this.cells[row, col].CellValue;
+                this.AddToVarDict(curCell);
             }
         }
 
@@ -369,8 +378,8 @@ namespace SpreadsheetEngine
         private void MyCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             MyCell? curCell = sender as MyCell;
-            string gkey = this.MakeKey(curCell.RowIndex, curCell.ColumnIndex);
-            if (curCell.CellText != null)
+
+            if (curCell != null && curCell.CellText != null)
             {
                 if (e.PropertyName == "CellText")
                 {
@@ -390,6 +399,10 @@ namespace SpreadsheetEngine
                                 int row = this.StringToInt(curCell.CellText.Substring(2));
                                 this.SolveCellReference(row, column, curCell);
                             }
+                            else if (!testChar)
+                            {
+                                curCell.CellValue = "!(bad reference)";
+                            }
                             else
                             {
                                 curCell.CellValue = curCell.CellText.Substring(1);
@@ -398,26 +411,28 @@ namespace SpreadsheetEngine
                         else
                         {
                             curCell.CellValue = curCell.CellText;
+                            this.AddToVarDict(curCell);
                         }
                     }
+                }
+                else if (this.CellPropertyChanged != null && e.PropertyName != "BGColor")
+                {
+                    this.CellPropertyChanged(sender, e);
                 }
             }
             else
             {
-                curCell.CellValue = null;
+                if (curCell != null)
+                {
+                    curCell.CellValue = null;
+                }
             }
 
             this.CellPropertyChanged?.Invoke(sender, e);
-
-            if (this.CellPropertyChanged != null && e.PropertyName != "BGColor")
+            /*if (curCell != null)
             {
-                this.CellPropertyChanged(sender, e);
-            }
-
-            if (curCell.CellValue != null && curCell.CellValue != string.Empty)
-            {
-                this.variables[gkey] = double.Parse(curCell.CellValue);
-            }
+                this.AddToVarDict(curCell);
+            }*/
 
             this.ChangeReferenceValues();
         }
@@ -519,7 +534,7 @@ namespace SpreadsheetEngine
         /// </summary>
         /// <param name="expression">expression entered into cell. </param>
         /// <param name="curCell">current cell.</param>
-        private void AddToDict(string expression, MyCell curCell)
+        private void AddToRefDict(string expression, MyCell curCell)
         {
             ExpressionTree test = new ExpressionTree(expression, this.variables);
             List<string> sExpression = test.ShuntingYardAlgorithm(expression);
@@ -540,6 +555,19 @@ namespace SpreadsheetEngine
                         this.referencedCells[sExpression[i]].Append(cell);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Adds values to the variable dictionary.
+        /// </summary>
+        /// <param name="curCell">current cell.</param>
+        private void AddToVarDict(MyCell? curCell)
+        {
+            if (curCell != null)
+            {
+                string key = this.MakeKey(curCell.RowIndex, curCell.ColumnIndex);
+                this.variables[key] = double.Parse(curCell.CellValue);
             }
         }
 
@@ -585,7 +613,7 @@ namespace SpreadsheetEngine
             /// <summary>
             /// Gets or sets the cellValue.
             /// </summary>
-            public new string CellValue
+            public new string? CellValue
             {
                 get { return this.cellValue; }
                 set { this.cellValue = value; }
