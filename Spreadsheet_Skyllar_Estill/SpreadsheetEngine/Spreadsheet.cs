@@ -341,6 +341,11 @@ namespace SpreadsheetEngine
             int value = text.Count(char.IsLetter);
             if (value == 1)
             {
+                if (Convert.ToInt32(text[1]) - 65 > this.columnCount)
+                {
+                    return false;
+                }
+
                 int row = int.Parse(text.Substring(2));
                 if (row < 0 || row > this.rowCount)
                 {

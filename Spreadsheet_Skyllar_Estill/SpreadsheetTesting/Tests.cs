@@ -104,9 +104,13 @@ namespace SpreadsheetTesting
             Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo(value));
         }
 
-
+        /// <summary>
+        /// Tests for cells that don't exsist
+        /// </summary>
+        /// <param name="cell"></param>
         [TestCase("=A11")]
-        [TestCase("=ZZ1")]
+        [TestCase("=AA1")]
+        [TestCase("=Z1")]
         public void CellOutOfContext(string cell)
         {
             this.spreadsheet.GetCell(0, 0).CellText = cell;
