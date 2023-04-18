@@ -359,18 +359,45 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// if the expression in the cell references itself.
+        /// </summary>
+        /// <param name="text">cell text.</param>
+        /// <param name="curCell">current cell.</param>
+        /// <returns>true if it contains reference to itself.</returns>
+        private bool IsSelfReference(MyCell? curCell)
+        {
+            string text = curCell.CellText;
+            ExpressionTree test = new ExpressionTree(text.Substring(1), this.variables);
+            List<string> sExpression = test.ShuntingYardAlgorithm(text.Substring(1));
+            string cellName = this.CellName(curCell.RowIndex, curCell.ColumnIndex);
+            if (sExpression.Contains(cellName))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// sets the value of the cell to the cell that it is referencing.
         /// </summary>
         /// <param name="row">row of referenced cell.</param>
         /// <param name="col">column of referenced cell..</param>
-        /// <param name="cell">current cell being edited.</param>
+        /// <param name="curCell">current cell being edited.</param>
         private void SolveCellReference(int row, int col, MyCell? curCell)
         {
             if (curCell != null)
             {
                 string cell = this.CellName(row, col);
                 this.AddToRefDict(cell, curCell);
-                curCell.CellValue = this.cells[row, col].CellValue;
+                if (this.cells[row, col].CellValue == null)
+                {
+                    curCell.CellValue = "0";
+                }
+                else
+                {
+                    curCell.CellValue = this.cells[row, col].CellValue;
+                }
+
                 this.AddToVarDict(curCell);
             }
         }
@@ -390,11 +417,16 @@ namespace SpreadsheetEngine
                 {
                     if (!string.IsNullOrWhiteSpace(curCell.CellText))
                     {
-                        if (curCell.CellText[0] == '=')
+                        bool testSelfReference = this.IsSelfReference(curCell);
+                        if (testSelfReference)
                         {
-                            bool testBool = this.IsFormula(curCell.CellText);
+                            curCell.CellValue = "!(self reference)";
+                        }
+                        else if (curCell.CellText[0] == '=')
+                        {
+                            bool testFormula = this.IsFormula(curCell.CellText);
                             bool testChar = this.IsCellReference(curCell.CellText);
-                            if (testBool)
+                            if (testFormula)
                             {
                                 this.SolveFormula(curCell.CellText[1..], curCell);
                             }

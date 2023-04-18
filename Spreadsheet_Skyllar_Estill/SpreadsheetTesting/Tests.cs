@@ -69,7 +69,7 @@ namespace SpreadsheetTesting
         public void TestNullCells()
         {
             this.spreadsheet.GetCell(0, 0).CellText = "=C4";
-            Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo(string.Empty));
+            Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo("0"));
         }
 
         /// <summary>
@@ -120,5 +120,11 @@ namespace SpreadsheetTesting
             Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo("!(bad reference)"));
         }
 
+        [Test]
+        public void SelfReference()
+        {
+            this.spreadsheet.GetCell(0, 0).CellText = "=A1";
+            Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo("!(self reference)"));
+        }
     }
 }
