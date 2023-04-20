@@ -38,6 +38,11 @@ namespace SpreadsheetEngine
         private Stack<Command> redo = new Stack<Command>();
 
         /// <summary>
+        /// stack of cell names that reference another cell in its text.
+        /// </summary>
+        private List<string> referencingCells = new List<string>();
+
+        /// <summary>
         /// values of the cells.
         /// </summary>
         private Dictionary<string, double> variables = new ();
@@ -335,7 +340,7 @@ namespace SpreadsheetEngine
         /// that doesn't exsist in the spreadsheet.
         /// </summary>
         /// <param name="text">cell text.</param>
-        /// <returns>true if contains 1 letter.</returns>
+        /// <returns>true if contains 1 letter and a number in the correct range.</returns>
         private bool IsCellReference(string text)
         {
             int value = text.Count(char.IsLetter);
@@ -432,9 +437,19 @@ namespace SpreadsheetEngine
                             }
                             else if (testChar)
                             {
-                                int column = this.LetterToNumber(curCell.CellText[1]);
-                                int row = this.StringToInt(curCell.CellText.Substring(2));
-                                this.SolveCellReference(row, column, curCell);
+                                this.referencingCells.Append(this.MakeKey(curCell.RowIndex, curCell.ColumnIndex));
+                                bool testCircular = this.IsCircularReference(curCell.CellText);
+                                if (!testCircular)
+                                {
+
+                                    int column = this.LetterToNumber(curCell.CellText[1]);
+                                    int row = this.StringToInt(curCell.CellText.Substring(2));
+                                    this.SolveCellReference(row, column, curCell);
+                                }
+                                else
+                                {
+                                    curCell.CellValue = "!(circular reference)";
+                                }
                             }
                             else if (!testChar)
                             {
@@ -466,11 +481,6 @@ namespace SpreadsheetEngine
             }
 
             this.CellPropertyChanged?.Invoke(sender, e);
-            /*if (curCell != null)
-            {
-                this.AddToVarDict(curCell);
-            }*/
-
             this.ChangeReferenceValues();
         }
 
@@ -545,6 +555,46 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// checks if a cell is using circular references
+        /// </summary>
+        /// <param name="text">cell text.</param>
+        /// <returns>true if it is a circular reference.</returns>
+        private bool IsCircularReference(string text)
+        {
+            List<string> references = this.GetCellsFromText(text.Substring(1));
+            for (int i = 0; i < references.Count; i++)
+            {
+                if (references.Contains(this.referencingCells[i]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// takes cell text and returns all the cell references in it.
+        /// </summary>
+        /// <param name="text">cell text.</param>
+        /// <returns>cells referenced in the cell text.</returns>
+        private List<string> GetCellsFromText(string text)
+        {
+            List<string> references = new List<string>();
+            ExpressionTree test = new ExpressionTree(text, this.variables);
+            List<string> sExpression = test.ShuntingYardAlgorithm(text);
+            for (int i = 0; i < sExpression.Count; i++)
+            {
+                if (char.IsLetter(sExpression[i][0]))
+                {
+                    references.Append(sExpression[i]);
+                }
+            }
+
+            return references;
+        }
+
+        /// <summary>
         /// converts a letter value to it's number value.
         /// </summary>
         /// <param name="letter">the letter.</param>
@@ -562,7 +612,7 @@ namespace SpreadsheetEngine
         /// <returns>numbers as int.</returns>
         private int StringToInt(string number)
         {
-            int result = 0;
+            int result = Convert.ToInt32(number) - 1;
             return result;
         }
 
@@ -589,7 +639,7 @@ namespace SpreadsheetEngine
                     }
                     else
                     {
-                        this.referencedCells[sExpression[i]].Append(cell);
+                        this.referencedCells[sExpression[i]].Add(cell);
                     }
                 }
             }
