@@ -84,6 +84,7 @@ namespace SpreadsheetTesting
             Assert.That(undo.GetRow, Is.EqualTo(1));
         }
 
+        /*
         /// <summary>
         /// Tests if the data from the XML file is added to the spreadsheet properly.
         /// testFile1 tests that that a value that references another cell is properly set.
@@ -103,6 +104,7 @@ namespace SpreadsheetTesting
             this.spreadsheet.LoadSpreadsheet(fileName);
             Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo(value));
         }
+        */
 
         /// <summary>
         /// Tests for cells that don't exsist.

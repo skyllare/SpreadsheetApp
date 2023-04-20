@@ -437,7 +437,7 @@ namespace SpreadsheetEngine
                             }
                             else if (testChar)
                             {
-                                this.referencingCells.Append(this.MakeKey(curCell.RowIndex, curCell.ColumnIndex));
+                                this.referencingCells.Add(this.MakeKey(curCell.RowIndex, curCell.ColumnIndex));
                                 bool testCircular = this.IsCircularReference(curCell.CellText);
                                 if (!testCircular)
                                 {
@@ -587,7 +587,7 @@ namespace SpreadsheetEngine
             {
                 if (char.IsLetter(sExpression[i][0]))
                 {
-                    references.Append(sExpression[i]);
+                    references.Add(sExpression[i]);
                 }
             }
 
