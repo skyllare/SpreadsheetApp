@@ -328,6 +328,11 @@ namespace SpreadsheetEngine
                 if (evaluation != null)
                 {
                     curCell.CellValue = evaluation.ToString();
+
+                }
+                else
+                {
+                    curCell.CellValue = "0";
                 }
 
                 this.AddToVarDict(curCell);
@@ -343,24 +348,25 @@ namespace SpreadsheetEngine
         /// <returns>true if contains 1 letter and a number in the correct range.</returns>
         private bool IsCellReference(string text)
         {
-            int value = text.Count(char.IsLetter);
-            if (value == 1)
+            List<string> sExpression = this.GetCellsFromText(text);
+            for (int i = 0; i < sExpression.Count; i++)
             {
-                if (Convert.ToInt32(text[1]) - 65 > this.columnCount)
+                int value = sExpression[i].Count(char.IsLetter);
+                if (value == 1)
                 {
-                    return false;
-                }
+                    if (Convert.ToInt32(text[0]) - 65 > this.columnCount)
+                    {
+                        return false;
+                    }
 
-                int row = int.Parse(text.Substring(2));
-                if (row < 0 || row > this.rowCount)
-                {
-                    return false;
+                    int row = int.Parse(sExpression[i].Substring(1));
+                    if (row < 0 || row > this.rowCount)
+                    {
+                        return false;
+                    }
                 }
-
-                return true;
             }
-
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -422,48 +428,47 @@ namespace SpreadsheetEngine
                 {
                     if (!string.IsNullOrWhiteSpace(curCell.CellText))
                     {
-                        bool testSelfReference = this.IsSelfReference(curCell);
-                        if (testSelfReference)
+                        if (curCell.CellText[0] != '=')
                         {
-                            curCell.CellValue = "!(self reference)";
+                            curCell.CellValue = curCell.CellText;
+                            this.AddToVarDict(curCell);
                         }
-                        else if (curCell.CellText[0] == '=')
+                        else
                         {
-                            bool testFormula = this.IsFormula(curCell.CellText);
-                            bool testChar = this.IsCellReference(curCell.CellText);
-                            if (testFormula)
+                            bool testSelfReference = this.IsSelfReference(curCell);
+                            if (testSelfReference)
                             {
-                                this.SolveFormula(curCell.CellText[1..], curCell);
+                                curCell.CellValue = "!(self reference)";
                             }
-                            else if (testChar)
+                            else
                             {
-                                this.referencingCells.Add(this.MakeKey(curCell.RowIndex, curCell.ColumnIndex));
+                                bool testFormula = this.IsFormula(curCell.CellText);
+                                bool testChar = this.IsCellReference(curCell.CellText);
                                 bool testCircular = this.IsCircularReference(curCell.CellText);
-                                if (!testCircular)
+                                this.referencingCells.Add(this.MakeKey(curCell.RowIndex, curCell.ColumnIndex));
+                                if (testCircular)
                                 {
-
+                                    curCell.CellValue = "!(circular reference)";
+                                }
+                                else if (testFormula)
+                                {
+                                    this.SolveFormula(curCell.CellText[1..], curCell);
+                                }
+                                else if (testChar)
+                                {
                                     int column = this.LetterToNumber(curCell.CellText[1]);
                                     int row = this.StringToInt(curCell.CellText.Substring(2));
                                     this.SolveCellReference(row, column, curCell);
                                 }
+                                else if (!testChar)
+                                {
+                                    curCell.CellValue = "!(bad reference)";
+                                }
                                 else
                                 {
-                                    curCell.CellValue = "!(circular reference)";
+                                    curCell.CellValue = curCell.CellText.Substring(1);
                                 }
                             }
-                            else if (!testChar)
-                            {
-                                curCell.CellValue = "!(bad reference)";
-                            }
-                            else
-                            {
-                                curCell.CellValue = curCell.CellText.Substring(1);
-                            }
-                        }
-                        else
-                        {
-                            curCell.CellValue = curCell.CellText;
-                            this.AddToVarDict(curCell);
                         }
                     }
                 }
@@ -518,7 +523,7 @@ namespace SpreadsheetEngine
                     string colRow = this.MakeKey(row, column);
                     this.changedCells.Add(colRow);
                     string tempKey = this.CellName(row, column);
-                    if (this.cells[row, column].CellValue != string.Empty)
+                    if (this.cells[row, column].CellValue != string.Empty && (this.cells[row, column].CellValue != null))
                     {
                         this.variables[tempKey] = double.Parse(this.cells[row, column].CellValue);
                     }
@@ -562,14 +567,16 @@ namespace SpreadsheetEngine
         private bool IsCircularReference(string text)
         {
             List<string> references = this.GetCellsFromText(text.Substring(1));
-            for (int i = 0; i < references.Count; i++)
+            if (this.referencingCells.Count != 0)
             {
-                if (references.Contains(this.referencingCells[i]))
+                for (int i = 0; i < references.Count; i++)
                 {
-                    return true;
+                    if (references.Contains(this.referencingCells[i]))
+                    {
+                        return true;
+                    }
                 }
             }
-
             return false;
         }
 
@@ -654,7 +661,15 @@ namespace SpreadsheetEngine
             if (curCell != null)
             {
                 string key = this.MakeKey(curCell.RowIndex, curCell.ColumnIndex);
-                this.variables[key] = double.Parse(curCell.CellValue);
+                if (curCell.CellValue != null)
+                {
+                    this.variables[key] = double.Parse(curCell.CellValue);
+                }
+                else
+                {
+                    this.variables[key] = 0;
+                }
+
             }
         }
 
