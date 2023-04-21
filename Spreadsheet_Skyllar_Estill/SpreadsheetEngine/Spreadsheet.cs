@@ -354,7 +354,7 @@ namespace SpreadsheetEngine
                 int value = sExpression[i].Count(char.IsLetter);
                 if (value == 1)
                 {
-                    if (Convert.ToInt32(text[0]) - 65 > this.columnCount)
+                    if (Convert.ToInt32(sExpression[i][0]) - 65 > this.columnCount)
                     {
                         return false;
                     }
@@ -364,6 +364,11 @@ namespace SpreadsheetEngine
                     {
                         return false;
                     }
+
+                }
+                else
+                {
+                    return false;
                 }
             }
             return true;
@@ -385,6 +390,7 @@ namespace SpreadsheetEngine
             {
                 return true;
             }
+
             return false;
         }
 
