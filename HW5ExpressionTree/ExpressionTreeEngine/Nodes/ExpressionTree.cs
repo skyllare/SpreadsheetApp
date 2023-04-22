@@ -93,7 +93,7 @@ namespace ExpressionTreeEngine
                     }
                     else
                     {
-                        this.dictTest = this.TestDictionary(sExpression);
+                        this.TestDictionary(sExpression);
                         ExpressionTreeVariableNode varNodeTemp = new ExpressionTreeVariableNode(sExpression[i], ref this.variables);
                         this.sOutput.Push(new ExpressionTreeConstNode(Convert.ToDouble(varNodeTemp.Evaluate().ToString())));
                     }
@@ -212,24 +212,24 @@ namespace ExpressionTreeEngine
         /// </summary>
         /// <param name="expression">expression.</param>
         /// <returns>true if all the keys are present, false if they aren't.</returns>
-        private bool TestDictionary(List<string> expression)
+        private void TestDictionary(List<string> expression)
         {
             for (int i = 0; i < expression.Count; i++)
             {
-                if (!OperatorNodeFactory.TypesOfOperators.Contains(expression[i]))
+                if (char.IsLetter(expression[i][0]))
                 {
-                    try
+                    if (this.variables.ContainsKey(expression[i]))
                     {
-                        double value = this.variables[expression[i]];
+                        dictTest = true;
                     }
-                    catch
+                    else
                     {
-                        return false;
+                        dictTest = false;
+                        break;
                     }
                 }
             }
 
-            return true;
         }
     }
 }
