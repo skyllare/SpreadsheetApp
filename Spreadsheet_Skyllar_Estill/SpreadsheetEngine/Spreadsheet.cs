@@ -427,7 +427,7 @@ namespace SpreadsheetEngine
         private void MyCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             MyCell? curCell = sender as MyCell;
-            bool testCircular = this.IsCircularReference(curCell.CellText);
+            bool testCircular = false;
             if (curCell != null && curCell.CellText != null)
             {
                 if (e.PropertyName == "CellText")
@@ -441,6 +441,7 @@ namespace SpreadsheetEngine
                         }
                         else
                         {
+                            testCircular = this.IsCircularReference(curCell.CellText);
                             bool testSelfReference = this.IsSelfReference(curCell);
                             if (testSelfReference)
                             {
@@ -472,6 +473,7 @@ namespace SpreadsheetEngine
                                 else
                                 {
                                     curCell.CellValue = curCell.CellText.Substring(1);
+                                    //this.referencingCells.Remove(this.MakeKey(curCell.RowIndex, curCell.ColumnIndex));
                                 }
                             }
                         }
@@ -491,7 +493,7 @@ namespace SpreadsheetEngine
             }
 
             this.CellPropertyChanged?.Invoke(sender, e);
-            this.ChangeReferenceValues();
+            this.ChangeReferenceValues(curCell.RowIndex, curCell.ColumnIndex);
             if (testCircular)
             {
                 curCell.CellValue = "!(circular reference)";
@@ -514,27 +516,49 @@ namespace SpreadsheetEngine
         /// <summary>
         /// changes the values of the cells that reference another cell.
         /// </summary>
-        private void ChangeReferenceValues()
+        private void ChangeReferenceValues(int curCellRow, int curCellCol)
         {
             foreach (string key in this.referencedCells.Keys)
             {
                 for (int i = 0; i < this.referencedCells[key].Count; i++)
                 {
-                    int column = 0, row = 0;
-                    this.GetRowCol(ref row, ref column, key, i);
-                    string equation = this.cells[row, column].CellText;
-                    double? evaluation = this.EvaluateExpression(equation);
-                    if (evaluation != null)
+                    string tempKey1 = key;
+                    int curColumn = 0, curRow = 0;
+                    this.GetRowCol(ref curRow, ref curColumn, tempKey1, i);
+                    if (this.referencedCells.Any(kvp => kvp.Value.Contains(key)))
                     {
-                        this.cells[row, column].CellValue = evaluation.ToString();
+                        tempKey1 = this.referencedCells.Last(kvp => kvp.Value.Contains(key)).Key;
+                        if (this.variables.ContainsKey(tempKey1))
+                        {
+                            this.variables[key] = this.variables[tempKey1];
+                        }
                     }
 
-                    string colRow = this.MakeKey(row, column);
-                    this.changedCells.Add(colRow);
-                    string tempKey = this.CellName(row, column);
-                    if (this.cells[row, column].CellValue != string.Empty && (this.cells[row, column].CellValue != null))
+                    int valColumn = 0, valRow = 0;
+                    double? evaluation = 0.0;
+                    if (i < this.referencedCells[tempKey1].Count && !this.IsFormula(this.cells[curRow, curColumn].CellText))
                     {
-                        this.variables[tempKey] = double.Parse(this.cells[row, column].CellValue);
+                        this.GetRowCol(ref valRow, ref valColumn, tempKey1, i);
+                        string equation = this.cells[valRow, valColumn].CellText;
+                        evaluation = this.EvaluateExpression(equation);                 
+                    }
+                    else
+                    {
+                        string equation = this.cells[curRow, curColumn].CellText;
+                        evaluation = this.EvaluateExpression(equation);
+                    }
+
+                    if (evaluation != null && (curRow != curCellRow || curColumn != curCellCol))
+                    {
+                        this.cells[curRow, curColumn].CellValue = evaluation.ToString();
+                    }
+
+                    string colRow = this.MakeKey(curRow, curColumn);
+                    this.changedCells.Add(colRow);
+                    string tempKey = this.CellName(curRow, curColumn);
+                    if (this.cells[curRow, curColumn].CellValue != string.Empty && (this.cells[curRow, curColumn].CellValue != null))
+                    {
+                        this.variables[tempKey] = double.Parse(this.cells[curRow, curColumn].CellValue);
                     }
                 }
             }
@@ -586,6 +610,7 @@ namespace SpreadsheetEngine
                     }
                 }
             }
+
             return false;
         }
 

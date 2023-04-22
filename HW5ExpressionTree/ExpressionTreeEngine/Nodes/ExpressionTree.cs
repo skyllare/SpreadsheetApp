@@ -220,11 +220,11 @@ namespace ExpressionTreeEngine
                 {
                     if (this.variables.ContainsKey(expression[i]))
                     {
-                        dictTest = true;
+                        this.dictTest = true;
                     }
                     else
                     {
-                        dictTest = false;
+                        this.dictTest = false;
                         break;
                     }
                 }

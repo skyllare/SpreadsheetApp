@@ -30,16 +30,6 @@ namespace SpreadsheetTesting
             Assert.That(spreadsheet2.GetCell(5, 6).CellValue, Is.EqualTo("!(circular reference)"));
         }
 
-        [Test]
-        public void CircularReferenceChange()
-        {
-            Spreadsheet spreadsheet2 = new Spreadsheet(10, 10);
-            spreadsheet2.GetCell(3, 6).CellText = "=G5";
-            spreadsheet2.GetCell(4, 6).CellText = "=G4";
-            spreadsheet2.GetCell(3, 6).CellText = "10";
-            Assert.That(spreadsheet2.GetCell(4, 6).CellValue, Is.EqualTo("10"));
-        }
-
         /// <summary>
         /// check is cell value of a cell the refereences another changes when the other changes.
         /// </summary>
@@ -145,8 +135,47 @@ namespace SpreadsheetTesting
         [Test]
         public void SelfReference()
         {
-            this.spreadsheet.GetCell(0, 0).CellText = "=A1";
-            Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo("!(self reference)"));
+            Spreadsheet spreadsheet2 = new Spreadsheet(10, 10);
+            spreadsheet2.GetCell(0, 0).CellText = "=A1";
+            Assert.That(spreadsheet2.GetCell(0, 0).CellValue, Is.EqualTo("!(self reference)"));
         }
+
+        [Test]
+        public void CircularReferenceChange()
+        {
+            Spreadsheet spreadsheet2 = new Spreadsheet(10, 10);
+            spreadsheet2.GetCell(0, 0).CellText = "=B1";
+            spreadsheet2.GetCell(0, 1).CellText = "=B2";
+            spreadsheet2.GetCell(1, 1).CellText = "5";
+            Assert.That(spreadsheet2.GetCell(0, 0).CellValue, Is.EqualTo("5"));
+        }
+
+        [Test]
+        public void CircularReferenceChangeMul()
+        {
+            Spreadsheet spreadsheet2 = new Spreadsheet(10, 10);
+            spreadsheet2.GetCell(0, 0).CellText = "=B1";
+            spreadsheet2.GetCell(0, 1).CellText = "=B2";
+            spreadsheet2.GetCell(1, 1).CellText = "5";
+            spreadsheet2.GetCell(0, 0).CellText = "=B1*7";
+            Assert.That(spreadsheet2.GetCell(0, 0).CellValue, Is.EqualTo("35"));
+            Assert.That(spreadsheet2.GetCell(0, 1).CellValue, Is.EqualTo("5"));
+            Assert.That(spreadsheet2.GetCell(1, 1).CellValue, Is.EqualTo("5"));
+        }
+
+        [Test]
+        public void CircularReferenceChangeCh()
+        {
+            Spreadsheet spreadsheet2 = new Spreadsheet(10, 10);
+            spreadsheet2.GetCell(0, 0).CellText = "=B1";
+            spreadsheet2.GetCell(0, 1).CellText = "=B2";
+            spreadsheet2.GetCell(1, 1).CellText = "=A2";
+            spreadsheet2.GetCell(1, 0).CellText = "7";
+            Assert.That(spreadsheet2.GetCell(0, 0).CellValue, Is.EqualTo("7"));
+            Assert.That(spreadsheet2.GetCell(0, 1).CellValue, Is.EqualTo("7"));
+            Assert.That(spreadsheet2.GetCell(1, 1).CellValue, Is.EqualTo("7"));
+            Assert.That(spreadsheet2.GetCell(1, 0).CellValue, Is.EqualTo("7"));
+        }
+
     }
 }
