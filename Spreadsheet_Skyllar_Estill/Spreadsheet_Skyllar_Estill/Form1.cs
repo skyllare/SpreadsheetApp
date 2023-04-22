@@ -42,8 +42,8 @@ namespace Spreadsheet_Skyllar_Estill
         {
             for (int i = 0; i < this.spreadsheet.ChangedCells.Count; i++)
             {
-                int col = int.Parse(this.spreadsheet.ChangedCells[i].Substring(0, 1));
-                int row = int.Parse(this.spreadsheet.ChangedCells[i].Substring(1));
+                int col = Convert.ToInt32(this.spreadsheet.ChangedCells[i][0]) - 65;
+                int row = int.Parse(this.spreadsheet.ChangedCells[i].Substring(1)) - 1;
                 Cell editedCell = this.spreadsheet.GetCell(row, col);
                 this.dataGridView1.Rows[row].Cells[col].Value = editedCell.CellValue;
             }

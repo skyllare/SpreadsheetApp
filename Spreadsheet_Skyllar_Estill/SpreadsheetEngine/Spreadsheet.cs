@@ -8,6 +8,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -35,6 +36,11 @@ namespace SpreadsheetEngine
         /// stack of redo commands.
         /// </summary>
         private Stack<Command> redo = new Stack<Command>();
+
+        /// <summary>
+        /// stack of cell names that reference another cell in its text.
+        /// </summary>
+        private List<string> referencingCells = new List<string>();
 
         /// <summary>
         /// values of the cells.
@@ -308,6 +314,112 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// solves a formula from the spreadsheet and save the cell's value to
+        /// the evaluation.
+        /// </summary>
+        /// <param name="formula">the formula.</param>
+        /// <param name="cell">current cell.</param>
+        private void SolveFormula(string formula, MyCell? curCell)
+        {
+            if (curCell != null)
+            {
+                this.AddToRefDict(formula, curCell);
+                double? evaluation = this.EvaluateExpression(formula);
+                if (evaluation != null)
+                {
+                    curCell.CellValue = evaluation.ToString();
+
+                }
+                else
+                {
+                    curCell.CellValue = "0";
+                }
+
+                this.AddToVarDict(curCell);
+            }
+        }
+
+        /// <summary>
+        /// checks if the cell text contains 1 letter.
+        /// if it contains more than one, it is referencing a cell
+        /// that doesn't exsist in the spreadsheet.
+        /// </summary>
+        /// <param name="text">cell text.</param>
+        /// <returns>true if contains 1 letter and a number in the correct range.</returns>
+        private bool IsCellReference(string text)
+        {
+            List<string> sExpression = this.GetCellsFromText(text);
+            for (int i = 0; i < sExpression.Count; i++)
+            {
+                int value = sExpression[i].Count(char.IsLetter);
+                if (value == 1)
+                {
+                    if (Convert.ToInt32(sExpression[i][0]) - 65 > this.columnCount)
+                    {
+                        return false;
+                    }
+
+                    int row = int.Parse(sExpression[i].Substring(1));
+                    if (row < 0 || row > this.rowCount)
+                    {
+                        return false;
+                    }
+
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// if the expression in the cell references itself.
+        /// </summary>
+        /// <param name="text">cell text.</param>
+        /// <param name="curCell">current cell.</param>
+        /// <returns>true if it contains reference to itself.</returns>
+        private bool IsSelfReference(MyCell? curCell)
+        {
+            string text = curCell.CellText;
+            ExpressionTree test = new ExpressionTree(text.Substring(1), this.variables);
+            List<string> sExpression = test.ShuntingYardAlgorithm(text.Substring(1));
+            string cellName = this.CellName(curCell.RowIndex, curCell.ColumnIndex);
+            if (sExpression.Contains(cellName))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// sets the value of the cell to the cell that it is referencing.
+        /// </summary>
+        /// <param name="row">row of referenced cell.</param>
+        /// <param name="col">column of referenced cell..</param>
+        /// <param name="curCell">current cell being edited.</param>
+        private void SolveCellReference(int row, int col, MyCell? curCell)
+        {
+            if (curCell != null)
+            {
+                string cell = this.CellName(row, col);
+                this.AddToRefDict(cell, curCell);
+                if (this.cells[row, col].CellValue == null)
+                {
+                    curCell.CellValue = "0";
+                }
+                else
+                {
+                    curCell.CellValue = this.cells[row, col].CellValue;
+                }
+
+                this.AddToVarDict(curCell);
+            }
+        }
+
+        /// <summary>
         /// Event handler for when a cell is changed.
         /// </summary>
         /// <param name="sender">The cell being modified.</param>
@@ -315,83 +427,76 @@ namespace SpreadsheetEngine
         private void MyCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             MyCell? curCell = sender as MyCell;
-            string gkey = Convert.ToChar(curCell.ColumnIndex + 65).ToString() + (curCell.RowIndex + 1).ToString();
-            if (curCell.CellText != null)
+            bool testCircular = false;
+            if (curCell != null && curCell.CellText != null)
             {
                 if (e.PropertyName == "CellText")
                 {
                     if (!string.IsNullOrWhiteSpace(curCell.CellText))
                     {
-
-                        if (curCell.CellText[0] == '=')
+                        if (curCell.CellText[0] != '=')
                         {
-                            bool testBool = this.IsFormula(curCell.CellText);
-                            Regex alphabetRegex = new Regex("[a-zA-Z]");
-                            bool testChar = alphabetRegex.IsMatch(curCell.CellText);
-                            if (testBool)
-                            {
-                                string equation = curCell.CellText[1..];
-                                this.AddToDict(equation, curCell);
-                                double? evaluation = this.EvaluateExpression(equation);
-                                curCell.CellValue = evaluation.ToString();
-                            }
-                            else if (testChar)
-                            {
-                                char columnLetter = curCell.CellText[1];
-                                int column = (int)columnLetter - 65;
-                                string sRow = curCell.CellText.Substring(2);
-                                int row = int.Parse(sRow) - 1;
-                                string cell = (columnLetter + sRow).ToString();
-                                this.AddToDict(cell, curCell);
-                                curCell.CellValue = this.cells[row, column].CellValue;
-                            }
-                            else
-                            {
-                                curCell.CellValue = curCell.CellText.Substring(1);
-                            }
+                            curCell.CellValue = curCell.CellText;
+                            this.AddToVarDict(curCell);
                         }
                         else
                         {
-                            curCell.CellValue = curCell.CellText;
+                            testCircular = this.IsCircularReference(curCell.CellText);
+                            bool testSelfReference = this.IsSelfReference(curCell);
+                            if (testSelfReference)
+                            {
+                                curCell.CellValue = "!(self reference)";
+                            }
+                            else
+                            {
+                                bool testFormula = this.IsFormula(curCell.CellText);
+                                bool testChar = this.IsCellReference(curCell.CellText);
+                                this.referencingCells.Add(this.MakeKey(curCell.RowIndex, curCell.ColumnIndex));
+                                if (testCircular)
+                                {
+                                    this.AddToRefDict(curCell.CellText, curCell);
+                                }
+                                else if (testFormula)
+                                {
+                                    this.SolveFormula(curCell.CellText[1..], curCell);
+                                }
+                                else if (testChar)
+                                {
+                                    int column = this.LetterToNumber(curCell.CellText[1]);
+                                    int row = this.StringToInt(curCell.CellText.Substring(2));
+                                    this.SolveCellReference(row, column, curCell);
+                                }
+                                else if (!testChar)
+                                {
+                                    curCell.CellValue = "!(bad reference)";
+                                }
+                                else
+                                {
+                                    curCell.CellValue = curCell.CellText.Substring(1);
+                                    //this.referencingCells.Remove(this.MakeKey(curCell.RowIndex, curCell.ColumnIndex));
+                                }
+                            }
                         }
                     }
+                }
+                else if (this.CellPropertyChanged != null && e.PropertyName != "BGColor")
+                {
+                    this.CellPropertyChanged(sender, e);
                 }
             }
             else
             {
-                curCell.CellValue = null;
+                if (curCell != null)
+                {
+                    curCell.CellValue = null;
+                }
             }
 
             this.CellPropertyChanged?.Invoke(sender, e);
-
-            if (this.CellPropertyChanged != null && e.PropertyName != "BGColor")
+            this.ChangeReferenceValues(curCell.RowIndex, curCell.ColumnIndex);
+            if (testCircular)
             {
-                this.CellPropertyChanged(sender, e);
-            }
-
-            if (curCell.CellValue != null && curCell.CellValue != string.Empty)
-            {
-                this.variables[gkey] = double.Parse(curCell.CellValue);
-            }
-
-            foreach (string key in this.referencedCells.Keys)
-            {
-                for (int i = 0; i < this.referencedCells[key].Count; i++)
-                {
-                    int column = 0, row = 0;
-                    this.GetRowCol(ref row, ref column, key, i);
-                    string equation = this.cells[row, column].CellText;
-                    double? evaluation = this.EvaluateExpression(equation);
-                    this.cells[row, column].CellValue = evaluation.ToString();
-                    string col = column.ToString();
-                    string rows = row.ToString();
-                    this.changedCells.Add(col + rows);
-                    string tempKey = this.CellName(row, column);
-                    if (this.cells[row, column].CellValue != string.Empty)
-                    {
-                        this.variables[tempKey] = double.Parse(this.cells[row, column].CellValue);
-                    }
-                }
+                curCell.CellValue = "!(circular reference)";
             }
         }
 
@@ -406,6 +511,57 @@ namespace SpreadsheetEngine
             test.MakeExpressionTree(expression);
             double? evaluation = test.Evaluate();
             return evaluation;
+        }
+
+        /// <summary>
+        /// changes the values of the cells that reference another cell.
+        /// </summary>
+        private void ChangeReferenceValues(int curCellRow, int curCellCol)
+        {
+            foreach (string key in this.referencedCells.Keys)
+            {
+                for (int i = 0; i < this.referencedCells[key].Count; i++)
+                {
+                    string tempKey1 = key;
+                    int curColumn = 0, curRow = 0;
+                    this.GetRowCol(ref curRow, ref curColumn, tempKey1, i);
+                    if (this.referencedCells.Any(kvp => kvp.Value.Contains(key)))
+                    {
+                        tempKey1 = this.referencedCells.Last(kvp => kvp.Value.Contains(key)).Key;
+                        if (this.variables.ContainsKey(tempKey1))
+                        {
+                            this.variables[key] = this.variables[tempKey1];
+                        }
+                    }
+
+                    int valColumn = 0, valRow = 0;
+                    double? evaluation = 0.0;
+                    if (i < this.referencedCells[tempKey1].Count && !this.IsFormula(this.cells[curRow, curColumn].CellText))
+                    {
+                        this.GetRowCol(ref valRow, ref valColumn, tempKey1, i);
+                        string equation = this.cells[valRow, valColumn].CellText;
+                        evaluation = this.EvaluateExpression(equation);                 
+                    }
+                    else
+                    {
+                        string equation = this.cells[curRow, curColumn].CellText;
+                        evaluation = this.EvaluateExpression(equation);
+                    }
+
+                    if (evaluation != null && (curRow != curCellRow || curColumn != curCellCol))
+                    {
+                        this.cells[curRow, curColumn].CellValue = evaluation.ToString();
+                    }
+
+                    string colRow = this.MakeKey(curRow, curColumn);
+                    this.changedCells.Add(colRow);
+                    string tempKey = this.CellName(curRow, curColumn);
+                    if (this.cells[curRow, curColumn].CellValue != string.Empty && (this.cells[curRow, curColumn].CellValue != null))
+                    {
+                        this.variables[tempKey] = double.Parse(this.cells[curRow, curColumn].CellValue);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -424,11 +580,89 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// takes row and column value and returns a key for the variables dictionary.
+        /// </summary>
+        /// <param name="row">row.</param>
+        /// <param name="col">column.</param>
+        /// <returns>key.</returns>
+        private string MakeKey(int row, int col)
+        {
+            string column = Convert.ToChar(col + 65).ToString();
+            string rows = (row + 1).ToString();
+            return column + rows;
+        }
+
+        /// <summary>
+        /// checks if a cell is using circular references
+        /// </summary>
+        /// <param name="text">cell text.</param>
+        /// <returns>true if it is a circular reference.</returns>
+        private bool IsCircularReference(string text)
+        {
+            List<string> references = this.GetCellsFromText(text.Substring(1));
+            if (this.referencingCells.Count != 0)
+            {
+                for (int i = 0; i < references.Count; i++)
+                {
+                    if (references.Contains(this.referencingCells[i]))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// takes cell text and returns all the cell references in it.
+        /// </summary>
+        /// <param name="text">cell text.</param>
+        /// <returns>cells referenced in the cell text.</returns>
+        private List<string> GetCellsFromText(string text)
+        {
+            List<string> references = new List<string>();
+            ExpressionTree test = new ExpressionTree(text, this.variables);
+            List<string> sExpression = test.ShuntingYardAlgorithm(text);
+            for (int i = 0; i < sExpression.Count; i++)
+            {
+                if (char.IsLetter(sExpression[i][0]))
+                {
+                    references.Add(sExpression[i]);
+                }
+            }
+
+            return references;
+        }
+
+        /// <summary>
+        /// converts a letter value to it's number value.
+        /// </summary>
+        /// <param name="letter">the letter.</param>
+        /// <returns>number value.</returns>
+        private int LetterToNumber(char letter)
+        {
+            int column = (int)letter - 65;
+            return column;
+        }
+
+        /// <summary>
+        /// takes a string of numbers and returns them as an int.
+        /// </summary>
+        /// <param name="number">number string.</param>
+        /// <returns>numbers as int.</returns>
+        private int StringToInt(string number)
+        {
+            int result = Convert.ToInt32(number) - 1;
+            return result;
+        }
+
+        /// <summary>
         /// adds the cells that reference other cells to the dictionary.
         /// </summary>
         /// <param name="expression">expression entered into cell. </param>
         /// <param name="curCell">current cell.</param>
-        private void AddToDict(string expression, MyCell curCell)
+        private void AddToRefDict(string expression, MyCell curCell)
         {
             ExpressionTree test = new ExpressionTree(expression, this.variables);
             List<string> sExpression = test.ShuntingYardAlgorithm(expression);
@@ -446,9 +680,30 @@ namespace SpreadsheetEngine
                     }
                     else
                     {
-                        this.referencedCells[sExpression[i]].Append(cell);
+                        this.referencedCells[sExpression[i]].Add(cell);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Adds values to the variable dictionary.
+        /// </summary>
+        /// <param name="curCell">current cell.</param>
+        private void AddToVarDict(MyCell? curCell)
+        {
+            if (curCell != null)
+            {
+                string key = this.MakeKey(curCell.RowIndex, curCell.ColumnIndex);
+                if (curCell.CellValue != null)
+                {
+                    this.variables[key] = double.Parse(curCell.CellValue);
+                }
+                else
+                {
+                    this.variables[key] = 0;
+                }
+
             }
         }
 
@@ -494,7 +749,7 @@ namespace SpreadsheetEngine
             /// <summary>
             /// Gets or sets the cellValue.
             /// </summary>
-            public new string CellValue
+            public new string? CellValue
             {
                 get { return this.cellValue; }
                 set { this.cellValue = value; }
