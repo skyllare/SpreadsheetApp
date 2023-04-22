@@ -427,7 +427,7 @@ namespace SpreadsheetEngine
         private void MyCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             MyCell? curCell = sender as MyCell;
-
+            bool testCircular = this.IsCircularReference(curCell.CellText);
             if (curCell != null && curCell.CellText != null)
             {
                 if (e.PropertyName == "CellText")
@@ -450,11 +450,10 @@ namespace SpreadsheetEngine
                             {
                                 bool testFormula = this.IsFormula(curCell.CellText);
                                 bool testChar = this.IsCellReference(curCell.CellText);
-                                bool testCircular = this.IsCircularReference(curCell.CellText);
                                 this.referencingCells.Add(this.MakeKey(curCell.RowIndex, curCell.ColumnIndex));
                                 if (testCircular)
                                 {
-                                    curCell.CellValue = "!(circular reference)";
+                                    this.AddToRefDict(curCell.CellText, curCell);
                                 }
                                 else if (testFormula)
                                 {
@@ -493,6 +492,10 @@ namespace SpreadsheetEngine
 
             this.CellPropertyChanged?.Invoke(sender, e);
             this.ChangeReferenceValues();
+            if (testCircular)
+            {
+                curCell.CellValue = "!(circular reference)";
+            }
         }
 
         /// <summary>

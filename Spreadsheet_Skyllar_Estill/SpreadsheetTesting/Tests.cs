@@ -20,6 +20,38 @@ namespace SpreadsheetTesting
         /// </summary>
         private Spreadsheet spreadsheet = new Spreadsheet(10, 10);
 
+        [Test]
+        public void CircularReference()
+        {
+            Spreadsheet spreadsheet2 = new Spreadsheet(10, 10);
+            spreadsheet2.GetCell(3, 6).CellText = "=G5";
+            spreadsheet2.GetCell(4, 6).CellText = "=G6";
+            spreadsheet2.GetCell(5, 6).CellText = "=G4";
+            Assert.That(spreadsheet2.GetCell(5, 6).CellValue, Is.EqualTo("!(circular reference)"));
+        }
+
+        [Test]
+        public void CircularReferenceChange()
+        {
+            Spreadsheet spreadsheet2 = new Spreadsheet(10, 10);
+            spreadsheet2.GetCell(3, 6).CellText = "=G5";
+            spreadsheet2.GetCell(4, 6).CellText = "=G4";
+            spreadsheet2.GetCell(3, 6).CellText = "10";
+            Assert.That(spreadsheet2.GetCell(4, 6).CellValue, Is.EqualTo("10"));
+        }
+
+        /// <summary>
+        /// check is cell value of a cell the refereences another changes when the other changes.
+        /// </summary>
+        [Test]
+        public void CheckChangedCells()
+        {
+            this.spreadsheet.GetCell(0, 2).CellText = "10";
+            this.spreadsheet.GetCell(0, 1).CellText = "=C1";
+            this.spreadsheet.GetCell(0, 2).CellText = "12";
+            Assert.That(this.spreadsheet.GetCell(0, 1).CellValue, Is.EqualTo("12"));
+        }
+
         /// <summary>
         /// test that the spreadsheet constructor has the correct number of rows.
         /// </summary>
@@ -48,18 +80,6 @@ namespace SpreadsheetTesting
         {
             this.spreadsheet.GetCell(0, 0).CellText = "10";
             Assert.That(this.spreadsheet.GetCell(0, 0).CellValue, Is.EqualTo("10"));
-        }
-
-        /// <summary>
-        /// check is cell value of a cell the refereences another changes when the other changes.
-        /// </summary>
-        [Test]
-        public void CheckChangedCells()
-        {
-            this.spreadsheet.GetCell(0, 0).CellText = "10";
-            this.spreadsheet.GetCell(0, 1).CellText = "=A1";
-            this.spreadsheet.GetCell(0, 0).CellText = "12";
-            Assert.That(this.spreadsheet.GetCell(0, 1).CellValue, Is.EqualTo("12"));
         }
 
         /// <summary>
