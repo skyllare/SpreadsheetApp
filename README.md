@@ -30,13 +30,14 @@ The values of each cell can be set to a value. Another cell can reference these 
 ### Invalid Inputs
 #### Circular Reference
 Triggered when the last cell references the first cell, creating a closed loop<br>
-https://github.com/skyllare/SpreadsheetApp/assets/112673303/c30d77a5-f0c4-4b08-a54d-656e893497dc
+![CircularReference](https://github.com/skyllare/SpreadsheetApp/assets/112673303/39a5fc8f-dc28-479e-8d3c-15154fba95af)
 #### Bad Reference
 Triggered when a cell that does not exist is referenced<br>
+![bad ref](https://github.com/skyllare/SpreadsheetApp/assets/112673303/7e61cac8-f9b9-4aa7-a747-505b7f315a61)
 
 #### Self Reference
 Triggered when a cell references itself. Works when cell references self in any capacity, including inside an equation<br>
-![CircularReference](https://github.com/skyllare/SpreadsheetApp/assets/112673303/39a5fc8f-dc28-479e-8d3c-15154fba95af)
+
 
 ### Undo/ Redo
 
