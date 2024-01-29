@@ -1,5 +1,5 @@
 # Spreadsheet Application
-This is a simple spreadsheet application that includes equation-solving capabilities. 
+This is a simple spreadsheet application that includes equation-solving capabilities. Has rows 1-50 and columns A-Z.
 
 ## Table of Contents
 
@@ -24,16 +24,28 @@ git clone git@github.com:skyllare/SpreadsheetApp.git
 
 ## Functionality
 ### Equation Solving with Cell Values
-The values of each cell can be set to a value. Another cell can reference these cells to do equations (+,-,*,/) on these values.<br>
+The values of each cell can be set to a value. Another cell can reference these cells to do equations (+,-,*,/) on these values<br>
 ![math gif](https://github.com/skyllare/SpreadsheetApp/assets/112673303/33affeae-3df1-4b08-a689-25bdf4fe1385)
 
 ### Invalid Inputs
+#### Circular Reference
+Triggered when the last cell references the first cell, creating a closed loop<br>
+https://github.com/skyllare/SpreadsheetApp/assets/112673303/c30d77a5-f0c4-4b08-a54d-656e893497dc
+#### Bad Reference
+Triggered when a cell that does not exist is referenced<br>
+![bad ref](https://github.com/skyllare/SpreadsheetApp/assets/112673303/24f1e2fa-46df-4c17-a0d7-029661eb0d14)
+#### Self Reference
+Triggered when a cell references itself. Works when cell references self in any capacity, including inside an equation<br>
 
 ### Undo/ Redo
 
 ### Color Changing
 
 ### Save/ Load
+
+## Authors
+Skyllar Estill
+skyllarestill@gmail.com
 
 
 
