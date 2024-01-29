@@ -33,9 +33,10 @@ Triggered when the last cell references the first cell, creating a closed loop<b
 https://github.com/skyllare/SpreadsheetApp/assets/112673303/c30d77a5-f0c4-4b08-a54d-656e893497dc
 #### Bad Reference
 Triggered when a cell that does not exist is referenced<br>
-![bad ref](https://github.com/skyllare/SpreadsheetApp/assets/112673303/24f1e2fa-46df-4c17-a0d7-029661eb0d14)
+
 #### Self Reference
 Triggered when a cell references itself. Works when cell references self in any capacity, including inside an equation<br>
+![CircularReference](https://github.com/skyllare/SpreadsheetApp/assets/112673303/39a5fc8f-dc28-479e-8d3c-15154fba95af)
 
 ### Undo/ Redo
 
